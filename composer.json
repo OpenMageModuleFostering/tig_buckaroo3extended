@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/tig_buckaroo3extended",
+    "type": "magento-module",
+    "license": "Creative-Commons-License",
+    "homepage": "",
+    "description": "The official Buckaroo extension for Magento",
+    "authors": [
+    {
+        "name": "TIG",
+        "email": "servicedesk@totalinternetgroup.nl"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

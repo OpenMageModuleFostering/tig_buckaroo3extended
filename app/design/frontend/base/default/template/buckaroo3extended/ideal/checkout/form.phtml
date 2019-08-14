@@ -1,0 +1,28 @@
+<?php $_session = Mage::getSingleton('checkout/session'); ?>
+<?php $_code = $this->getMethodCode() ?>
+<?php $_value = $_session->getData($_code . '_BPE_Issuer'); ?>
+<?php $_issuerList = $this->getIssuerList();?>
+<?php $validation = ''; ?>
+<div id="payment-errors" class="validation-advice" style="display:none;"></div>
+
+<fieldset class="form-list buckaroo-method">
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none" class="buckaroo3extended_input">
+        <li><label class="required"><?php echo $this->__('Please, choose your bank'); ?>: <em>*</em></label></li>
+        <li>
+        	<div id="radiogroup-container">
+        	    <?php $i = 0; ?>
+        	    <?php foreach($_issuerList as $issuer => $issuerDetails): ?>
+                    <?php $i++; ?>
+                    <?php if ($i == count($_issuerList)): ?>
+                        <?php $validation = "class='validate-one-required-by-name'"; ?>
+                    <?php endif; ?>
+        	        <label>
+                        <input type="radio" name="<?php echo $_code;?>_BPE_Issuer" value="<?php echo $issuer; ?>" <?php echo $validation; ?> <?php echo $issuer == $_value ? "checked" : ''; ?>/> 
+                        <img src="<?php echo $this->getSkinUrl("images/tig_buckaroo3extended/" . $issuerDetails['logo']);?>"/> 
+                        <?php echo $this->__($issuerDetails['name']);?>
+                    </label>
+        	    <?php endforeach; ?>
+            </div>
+        </li>
+    </ul>
+</fieldset>

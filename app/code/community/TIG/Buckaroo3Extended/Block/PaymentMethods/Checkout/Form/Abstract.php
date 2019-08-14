@@ -44,7 +44,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Checkout_Form_Abstract extends 
         $fee = str_replace(',', '.', $paymentFee);
 
         // Check if the fee given rounds to 0.01+, if not, return nothing
-        if (number_format($fee, 2, '.', ',') == 0.00) {
+        if (number_format((float)$fee, 2, '.', ',') == 0.00) {
             return '';
         }
 

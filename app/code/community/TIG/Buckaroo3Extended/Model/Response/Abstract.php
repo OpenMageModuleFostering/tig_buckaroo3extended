@@ -68,15 +68,15 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
     {
         if ($this->_response === false) {
             $this->_debugEmail .= "An error occurred in building or sending the SOAP request.. \n";
-            $this->_error();
+            return $this->_error();
         }
 
         $this->_debugEmail .= "verifiying authenticity of the response... \n";
         $verified = $this->_verifyResponse();
 
         if ($verified !== true) {
-            $this->_debugEmail .= "The authenticity of the responw could NOT be verified. \n";
-            $this->_verifyError();
+            $this->_debugEmail .= "The authenticity of the response could NOT be verified. \n";
+            return $this->_verifyError();
         }
         $this->_debugEmail .= "Verified as authentic! \n\n";
 
@@ -112,7 +112,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
             && $requiredAction == 'Redirect')
         {
             $this->_debugEmail .= "Redirecting customer... \n";
-            $this->_redirectUser();
+            return $this->_redirectUser();
         }
 
         $this->_debugEmail .= "Parsed response: " . var_export($parsedResponse, true) . "\n";
@@ -128,27 +128,20 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
             )
         );
 
-        $this->_requiredAction($parsedResponse);
+        return $this->_requiredAction($parsedResponse);
     }
 
     protected function _requiredAction($response)
     {
         switch ($response['status']) {
-            case self::BUCKAROO_SUCCESS:           $this->_success();
-                                                   break;
-            case self::BUCKAROO_FAILED:            $this->_failed();
-                                                   break;
-            case self::BUCKAROO_ERROR:             $this->_error();
-                                                   break;
-            case self::BUCKAROO_NEUTRAL:           $this->_neutral();
-                                                   break;
-            case self::BUCKAROO_PENDING_PAYMENT:   $this->_pendingPayment();
-                                                   break;
-            case self::BUCKAROO_INCORRECT_PAYMENT: $this->_incorrectPayment();
-                                                   break;
-            case self::BUCKAROO_REJECTED:          $this->_rejected();
-                                                   break;
-            default:                               $this->_neutral();
+            case self::BUCKAROO_SUCCESS:           return $this->_success();
+            case self::BUCKAROO_FAILED:            return $this->_failed();
+            case self::BUCKAROO_ERROR:             return $this->_error();
+            case self::BUCKAROO_NEUTRAL:           return $this->_neutral();
+            case self::BUCKAROO_PENDING_PAYMENT:   return $this->_pendingPayment();
+            case self::BUCKAROO_INCORRECT_PAYMENT: return $this->_incorrectPayment();
+            case self::BUCKAROO_REJECTED:          return $this->_rejected();
+            default:                               return $this->_neutral();
         }
     }
 

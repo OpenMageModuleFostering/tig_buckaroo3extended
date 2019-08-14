@@ -54,10 +54,18 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
 
     public function __construct($data = array())
     {
-        $this->setCurrentOrder($data['order']);
-        $this->setPostArray($data['postArray']);
-        $this->setDebugEmail($data['debugEmail']);
-        $this->setMethod($data['method']);
+        if (!empty($data['order'])) {
+            $this->setCurrentOrder($data['order']);
+        }
+        if (!empty($data['postArray'])) {
+            $this->setPostArray($data['postArray']);
+        }
+        if (!empty($data['debugEmail'])) {
+            $this->setDebugEmail($data['debugEmail']);
+        }
+        if (!empty($data['method'])) {
+            $this->setMethod($data['method']);
+        }
     }
 
     /**
@@ -618,5 +626,44 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         );
 
         return $signature2;
+    }
+
+    /**
+     * Checks if the correct amount has been paid.
+     */
+    protected function _checkCorrectAmount()
+    {
+        /**
+         * TEMPORARY DIRTY FIX -- REMOVE BEFORE RELEASE
+         * @todo remove this code
+         */
+        return true;
+
+        $amountPaid = $this->_postArray['brq_amount'];
+
+        $this->_debugEmail .= 'Currency used is '
+            . $this->_postArray['brq_currency']
+            . '. Order currency is '
+            . $this->_order->getOrderCurrencyCode()
+            . ".\n";
+
+        if ($this->_postArray['brq_currency'] == $this->_order->getOrderCurrencyCode()) {
+            $this->_debugEmail .= "Currency used is same as order currency \n";
+            $amountOrdered = $this->_order->getGrandTotal();
+        } else {
+            $this->_debugEmail .= "Currency used is different from order currency \n";
+            $amountOrdered = $this->_order->getBaseGrandTotal();
+        }
+
+        $this->_debugEmail .= "Amount paid: {$amountPaid}. Amount ordered: {$amountOrdered} \n";
+
+        if (($amountPaid - $amountOrdered) > 0.01 || ($amountPaid - $amountOrdered) < -0.01) {
+            return array(
+                'message' => 'Incorrect amount transfered',
+                'status'  => self::BUCKAROO_INCORRECT_PAYMENT,
+            );
+        } else {
+            return true;
+        }
     }
 }

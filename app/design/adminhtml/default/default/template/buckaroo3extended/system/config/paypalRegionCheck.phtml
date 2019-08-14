@@ -3,10 +3,13 @@
     <?php
     $paymentActive = Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/active', Mage::app()->getRequest()->getParam('store'));
     $sellerProtectionActive = Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/sellers_protection', Mage::app()->getRequest()->getParam('store'));
+    $regionIsRequired = $this->getIsRegionRequired();
     ?>
-    <?php if($paymentActive==0 || $sellerProtectionActive==0): ?>
+    <?php if( $paymentActive == 0 || $sellerProtectionActive == 0 ): ?>
         <?php return $this; ?>
     <?php endif; ?>
+
+    <?php if($regionIsRequired && $sellerProtectionActive): ?>
     <div class="error-msg buckaroo">
         <h4>
             <?php
@@ -14,15 +17,14 @@
             ?>
         </h4>
     </div>
+    <?php endif; ?>
     <?php /* Stylesheet not available */ ?>
     <style>
         .error-msg.buckaroo { margin-bottom:25px; padding:8px 8px 8px 32px; }
         .error-msg.buckaroo h4 { margin:0; }
     </style>
     <?php return $this; ?>
-<?php endif; ?>
-
-
+<?php endif;?>
 <?php if($this->getIsRegionRequired()): ?>
     <?php return $this; ?>
 <?php endif; ?>

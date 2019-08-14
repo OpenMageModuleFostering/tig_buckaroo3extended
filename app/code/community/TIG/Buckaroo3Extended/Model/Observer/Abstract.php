@@ -38,6 +38,10 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
     {
         $ret = false;
 
+        if (null === $observer->getOrder()) {
+            return false;
+        }
+
         $chosenMethod = $observer->getOrder()->getPayment()->getMethod();
 
         if ($chosenMethod === $this->_code) {
@@ -418,7 +422,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _getPaymentMethodsAllowed()
     {
-        $configAllowed = Mage::getStoreConfig('buckaroo/' . $this->_code . '/allowed_methods', $this->getStoreId());
+        $configAllowed = Mage::getStoreConfig('buckaroo/' . $this->_code . '/allowed_methods', $this->_order->getStoreId());
 
         $allowedArray = explode(',', $configAllowed);
 
@@ -554,6 +558,15 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         $checkForSellerProtection = Mage::helper('buckaroo3extended')->checkSellersProtection($order);
 
         if ($checkForSellerProtection){
+            // See if we can get a stateCode for this country & region
+            $stateCode = Mage::helper('buckaroo3extended/stateCodes')->getCodeFromValue(
+                $shippingAddress['country_id'],
+                $shippingAddress['region']
+            );
+            if ($stateCode) {
+                $shippingAddress['region'] = $stateCode;
+            }
+
             $arrayCustom = array(
                 'Name'              =>  $shippingAddress['lastname'],
                 'Street1'           =>  $shippingAddress['street'],

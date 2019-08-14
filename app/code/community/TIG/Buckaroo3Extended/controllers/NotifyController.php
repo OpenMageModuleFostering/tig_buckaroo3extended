@@ -100,9 +100,14 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             $this->_debugEmail .= "\n/////////// TEST /////////\n";
         }
 
-        $this->_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
+        if (strpos($orderId, 'quote_') !== false) {
+            $quoteId = str_replace('quote_', '', $orderId);
+            $this->_order = Mage::getModel('sales/order')->load($quoteId, 'quote_id');
+        } else {
+            $this->_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
+        }
 
-        if (!$this->_order) {
+        if (!$this->_order || !$this->_order->getId()) {
             return false;
         }
 
@@ -117,6 +122,8 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             $module = Mage::getModel('buckaroo3extended/abstract', $this->_debugEmail);
             $module->setDebugEmail($this->_debugEmail);
             $module->sendDebugEmail();
+
+            $this->getResponse()->setHttpResponseCode(503);
             return false;
         }
 
@@ -158,6 +165,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
 
     public function returnAction()
     {
+
         $postData = $this->getRequest()->getPost();
         if (isset($postData['brq_invoicenumber'])) {
             $orderId = $postData['brq_invoicenumber'];
@@ -166,27 +174,57 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             return;
         }
 
-        $this->_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
+        if (isset($postData['brq_transaction_method'])
+            && $postData['brq_transaction_method'] == 'masterpass'
+            && isset($postData['brq_SERVICE_masterpass_Version'])
+            && $postData['brq_SERVICE_masterpass_Version'] == 'v6'
+        ) {
+            /**
+             * @var TIG_Buckaroo3Extended_Model_Response_MasterPass $module
+             */
+            try {
+                $module = Mage::getModel(
+                    'buckaroo3extended/response_masterPass',
+                    array(
+                        'postArray' => $postData,
+                    )
+                );
 
-        $this->_paymentCode = $this->_order->getPayment()->getMethod();
+                $redirectData = $module->processReturn();
+            } catch(Exception $e) {
+                $helper = Mage::helper('buckaroo3extended');
+                Mage::getSingleton('checkout/session')->addError(
+                    $helper->__('Something went wrong while checkout out with MasterPass. Try again.')
+                );
+                $redirectData['path'] = 'checkout/cart';
+                $redirectData['params'] = array();
+            }
+            $this->_redirect($redirectData['path'], $redirectData['params']);
 
-        $debugEmail = 'Payment code: ' . $this->_paymentCode . "\n\n";
-        $debugEmail .= 'POST variables received: ' . var_export($postData, true) . "\n\n";
+            return;
+        } else {
+            $this->_order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
 
-        /**
-         * @var TIG_Buckaroo3Extended_Model_Response_Return $module
-         */
-        $module = Mage::getModel(
-            'buckaroo3extended/response_return',
-            array(
-                'order'      => $this->_order,
-                'postArray'  => $postData,
-                'debugEmail' => $debugEmail,
-                'method'     => $this->_paymentCode,
-            )
-        );
+            $this->_paymentCode = $this->_order->getPayment()->getMethod();
 
-        $module->processReturn();
+            $debugEmail = 'Payment code: ' . $this->_paymentCode . "\n\n";
+            $debugEmail .= 'POST variables received: ' . var_export($postData, true) . "\n\n";
+
+            /**
+             * @var TIG_Buckaroo3Extended_Model_Response_Return $module
+             */
+            $module = Mage::getModel(
+                'buckaroo3extended/response_return',
+                array(
+                    'order'      => $this->_order,
+                    'postArray'  => $postData,
+                    'debugEmail' => $debugEmail,
+                    'method'     => $this->_paymentCode,
+                )
+            );
+
+            $module->processReturn();
+        }
 
         $this->_redirect('');
     }

@@ -6,7 +6,7 @@
                 <buckaroo_giftcard translate="title" module="buckaroo3extended">
                     <title>Buckaroo Giftcards</title>
                     <sort_order>55</sort_order>
-                    <action>admin_buckaroo3extended/adminhtml_giftcard</action>
+                    <action>adminhtml/buckarooAdminhtml_giftcard</action>
                 </buckaroo_giftcard>
             </children>
         </system>

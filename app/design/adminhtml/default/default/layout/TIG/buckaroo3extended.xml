@@ -83,29 +83,29 @@
         </reference>
     </adminhtml_sales_order_creditmemo_updateqty>
 
-    <admin_buckaroo3extended_adminhtml_giftcard_index>
+    <adminhtml_buckarooadminhtml_giftcard_index>
         <reference name="content">
             <block type="buckaroo3extended/adminhtml_giftcard" name="buckaroo.backend.giftcard"/>
         </reference>
-    </admin_buckaroo3extended_adminhtml_giftcard_index>
+    </adminhtml_buckarooadminhtml_giftcard_index>
 
-    <admin_buckaroo3extended_adminhtml_giftcard_grid>
+    <adminhtml_buckarooadminhtml_giftcard_grid>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="buckaroo3extended/adminhtml_giftcard_grid" name="buckaroo.backend.giftcard.grid"/>
         </block>
-    </admin_buckaroo3extended_adminhtml_giftcard_grid>
+    </adminhtml_buckarooadminhtml_giftcard_grid>
 
-    <admin_buckaroo3extended_adminhtml_giftcard_new>
+    <adminhtml_buckarooadminhtml_giftcard_new>
         <update handle="editor"/>
         <reference name="content">
             <block type="buckaroo3extended/adminhtml_giftcard_edit" name="buckaroo.backend.giftcard.edit" />
         </reference>
-    </admin_buckaroo3extended_adminhtml_giftcard_new>
+    </adminhtml_buckarooadminhtml_giftcard_new>
 
-    <admin_buckaroo3extended_adminhtml_giftcard_edit>
+    <adminhtml_buckarooadminhtml_giftcard_edit>
         <update handle="editor"/>
         <reference name="content">
             <block type="buckaroo3extended/adminhtml_giftcard_edit" name="buckaroo.backend.giftcard.edit" />
         </reference>
-    </admin_buckaroo3extended_adminhtml_giftcard_edit>
+    </adminhtml_buckarooadminhtml_giftcard_edit>
 </layout>

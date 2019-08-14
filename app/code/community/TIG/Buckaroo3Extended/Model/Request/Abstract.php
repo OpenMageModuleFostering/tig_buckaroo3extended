@@ -3,6 +3,7 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
 {
     protected $_vars;
     protected $_method;
+    protected $_responseModelClass;
 
     public function getVars()
     {
@@ -28,41 +29,53 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
         return $this;
     }
 
-    public function __construct() {
+    public function getResponseModelClass()
+    {
+        return $this->_responseModelClass;
+    }
+
+    public function setResponseModelClass($class = '')
+    {
+        $this->_responseModelClass = $class;
+
+        return $this;
+    }
+
+    public function __construct()
+    {
         parent::__construct();
 
         $this->setVars(array());
+
+        $responseModelClass = Mage::helper('buckaroo3extended')->isAdmin() ? 'buckaroo3extended/response_backendOrder' : 'buckaroo3extended/response_abstract';
+        $this->setResponseModelClass($responseModelClass);
     }
 
     public function sendRequest()
     {
         try {
-            $this->_sendRequest();
+            return $this->_sendRequest();
         } catch (Exception $e) {
-
-            $responseModelClass = Mage::helper('buckaroo3extended')->isAdmin() ? 'buckaroo3extended/response_backendOrder' : 'buckaroo3extended/response_abstract';
-
             Mage::helper('buckaroo3extended')->logException($e);
-            $responseModel = Mage::getModel(
-                $responseModelClass,
-                array(
-                    'response' => false,
-                    'XML' => false,
-                    'debugEmail' => $this->_debugEmail
-                )
-            );
-            $responseModel->setOrder($this->_order)
+            $responseModel = Mage::getModel($this->_responseModelClass, array(
+                'response'   => false,
+                'XML'        => false,
+                'debugEmail' => $this->_debugEmail,
+            ));
+            return $responseModel->setOrder($this->_order)
                           ->processResponse();
         }
     }
 
     protected function _sendRequest()
     {
-        $responseModelClass = Mage::helper('buckaroo3extended')->isAdmin() ? 'buckaroo3extended/response_backendOrder' : 'buckaroo3extended/response_abstract';
-
         if (empty($this->_order)) {
             $this->_debugEmail .= "No order was set! :( \n";
-            Mage::getModel($responseModelClass, array('response' => false, 'XML' => false, 'debugEmail' => $this->_debugEmail))->processResponse();
+            return Mage::getModel($this->_responseModelClass, array(
+                'response'   => false,
+                'XML'        => false,
+                'debugEmail' => $this->_debugEmail,
+            ))->processResponse();
         }
 
         if($this->_order->hasTransactionKey()){
@@ -86,19 +99,16 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
         //if no method has been set (no payment method could identify the chosen method) process the order as if it had failed
         if (empty($this->_method)) {
             $this->_debugEmail .= "No method was set! :( \n";
-            $responseModel = Mage::getModel(
-                $responseModelClass,
-                array(
-                    'response' => false,
-                    'XML' => false,
-                    'debugEmail' => $this->_debugEmail
-                )
-            );
+            $responseModel = Mage::getModel($this->_responseModelClass, array(
+                'response'   => false,
+                'XML'        => false,
+                'debugEmail' => $this->_debugEmail,
+            ));
             if (!$responseModel->getOrder()) {
                 $responseModel->setOrder($this->_order);
             }
 
-            $responseModel->processResponse();
+            return $responseModel->processResponse();
         }
 
         //hack to prevent SQL errors when using onestepcheckout
@@ -148,19 +158,16 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
         $this->_debugEmail .= "Processing response... \n";
 
         //process the response
-        $responseModel = Mage::getModel(
-            $responseModelClass,
-            array(
-                'response'   => $response,
-                'XML'        => $responseXML,
-                'debugEmail' => $this->_debugEmail,
-            )
-        );
+        $responseModel = Mage::getModel($this->_responseModelClass, array(
+            'response'   => $response,
+            'XML'        => $responseXML,
+            'debugEmail' => $this->_debugEmail,
+        ));
 
         if (!$responseModel->getOrder()) {
             $responseModel->setOrder($this->_order);
         }
-        $responseModel->processResponse();
+        return $responseModel->processResponse();
     }
 
     protected function _addServices()
@@ -236,6 +243,17 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
     protected function _addOrderVariables()
     {
         list($currency, $totalAmount) = $this->_determineAmountAndCurrency();
+
+        // If we have a quote instead of an order, we need to look elsewhere for the total
+        if ($this->_order instanceof Mage_Sales_Model_Quote) {
+            $correctAmount = $this->_order->getShippingAddress()->getBaseGrandTotal();
+            if ($correctAmount == 0) {
+                $correctAmount = $this->_order->getBillingAddress()->getBaseGrandTotal();
+            }
+            if ($correctAmount > 0) {
+                $totalAmount = $correctAmount;
+            }
+        }
 
         $this->_vars['currency']     = $currency;
         $this->_vars['amountCredit'] = 0;

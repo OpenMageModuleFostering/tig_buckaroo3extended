@@ -31,7 +31,7 @@ class TIG_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Method_Abs
     const BUCKAROO_REJECTED          = 'BUCKAROO_REJECTED';
 
     /**
-     *  @var Mage_Sales_Model_Order $_order
+     *  @var Mage_Sales_Model_Order|Mage_Sales_Model_Quote $_order
      */
     protected $_order = '';
     protected $_debugEmail;
@@ -398,6 +398,9 @@ class TIG_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Method_Abs
                                                          break;
             case 'buckaroo3extended_sofortueberweisung': $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_sofortueberweisung_paymentMethod');
                                                          $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_sofortueberweisung/allowed_currencies', $this->getStoreId());
+                                                         break;
+            case 'buckaroo3extended_maestro':            $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_maestro_paymentMethod');
+                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_maestro/allowed_currencies', $this->getStoreId());
                                                          break;
             default:                                     $paymentMethod = null;
                                                          $currenciesAllowedConfig = 'EUR';

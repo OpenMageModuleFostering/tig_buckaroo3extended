@@ -176,24 +176,50 @@ class TIG_Buckaroo3Extended_Helper_Data extends Mage_Core_Helper_Abstract
         return Mage::helper('core')->isModuleEnabled('Klarna_KlarnaPaymentModule');
     }
 
+    /**
+     * Checks if allowed countries, of globally all countries is required to fill in a region while checking out with
+     * the paypal sellers protection enabled.
+     * @return bool
+     */
     public function checkRegionRequired()
     {
         $storeId = Mage::app()->getRequest()->getParam('store');
         $allowSpecific = Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/allowspecific', $storeId);
+
+        $regionRequiredCountries = array(
+            'AR', //argentina
+            'BR', //brazil
+            'CA', //canada
+            'CN', //china
+            'ID', //indonesia
+            'JP', //japan
+            'MX', //mexico
+            'TH', //thailand
+            'US', //usa
+        );
+
         if ($allowSpecific) {
             $allowedCountries = explode(',', Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/specificcountry', $storeId));
         } else {
-            $allowedCountries = Mage::getModel('directory/country')->getResourceCollection()
-                                                                   ->loadByStore($storeId)
-                                                                   ->toOptionArray(true);
+            $allowedCountriesOptions = Mage::getModel('directory/country')->getResourceCollection()
+                ->loadByStore($storeId)
+                ->toOptionArray(true);
+
+            $allowedCountries = array();
+            foreach($allowedCountriesOptions as $options){
+                $allowedCountries[] = $options['value'];
+            }
+
         }
 
-        foreach ($allowedCountries as $country) {
-            if (!Mage::helper('directory')->isregionRequired($country)) {
-                return false;
+        //if one of the allowed countries in the required-region array exists
+        //then the region must be required, if none exists then the message cannot be shown
+        foreach($regionRequiredCountries as $country){
+            if(in_array($country,$allowedCountries)){
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public function checkSellersProtection($order)

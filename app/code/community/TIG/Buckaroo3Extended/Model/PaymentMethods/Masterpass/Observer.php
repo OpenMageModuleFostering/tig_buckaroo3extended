@@ -65,7 +65,6 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Masterpass_Observer
 
         $vars = $request->getVars();
         $serviceVersion = $this->_getServiceVersion();
-
         $array = array(
             $this->_method     => array(
                 'action'    => 'PaymentInvitation',
@@ -171,6 +170,46 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Masterpass_Observer
         }
 
         $array['Articles'] = $group;
+
+        // fallback if the request is based on a quote
+        if($this->_order instanceof Mage_Sales_Model_Quote)
+        {
+            $quote = $this->_order;
+
+            // repair empty order ID
+            $vars['orderId'] = 'quote_' . $quote->getId();
+
+            // repair empty discount price
+            $discount = $quote->getBaseSubtotal() - $quote->getBaseSubtotalWithDiscount();
+            $array['Discount'] = (double) $discount;
+
+            // repair empty article prices
+            $products = $quote->getAllItems();
+            $groupId  = 0;
+            foreach($products as $item)
+            {
+                if (empty($item) || $item->hasParentItemId()) {
+                    continue;
+                }
+
+                $productPrice = ($item->getBasePrice() * $item->getQty()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount();
+
+                if($item->getProductType() == 'bundle') {
+                    $productPrice = $quote->getSubtotal() + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount();
+                }
+
+                $array['Articles'][$groupId]['ArticleDescription']['value'] = (int) $item->getQty() . 'x ' . $item->getName();
+                $array['Articles'][$groupId]['ArticleUnitPrice']['value']   = (string) round($productPrice, 2);
+
+                $groupId++;
+            }
+
+            // repair empty shipping costs
+            $array['ShippingCosts'] = (string) round($vars['amountDebit'] - $quote->getBaseSubtotalWithDiscount(), 2);
+
+            // enable remote shipping selection
+            $array['ShippingSuppression'] = 'FALSE';
+        }
 
         if (array_key_exists('customVars', $vars) && array_key_exists($this->_method, $vars['customVars']) && is_array($vars['customVars'][$this->_method])) {
             $vars['customVars'][$this->_method] = array_merge($vars['customVars'][$this->_method], $array);

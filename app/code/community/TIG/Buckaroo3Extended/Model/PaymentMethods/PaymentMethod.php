@@ -206,7 +206,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod extends Mage_Paym
         }
 
         // Check limit by ip
-        if (mage::getStoreConfig('dev/restrict/allow_ips') && Mage::getStoreConfig('buckaroo/' . $this->_code . '/limit_by_ip')) {
+        if (Mage::getStoreConfig('dev/restrict/allow_ips')
+            && Mage::getStoreConfig('buckaroo/' . $this->_code . '/limit_by_ip')
+        ) {
             $allowedIp = explode(',', mage::getStoreConfig('dev/restrict/allow_ips'));
             if (!in_array(Mage::helper('core/http')->getRemoteAddr(), $allowedIp)) {
                 return false;
@@ -221,7 +223,12 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_PaymentMethod extends Mage_Paym
             return false;
         }
 
-        return TIG_Buckaroo3Extended_Model_Request_Availability::canUseBuckaroo($quote);
+        if(!TIG_Buckaroo3Extended_Model_Request_Availability::canUseBuckaroo($quote)){
+            return false;
+        }
+
+        return parent::isAvailable($quote);
+
     }
 
     public function filterAccount($accountNumber)

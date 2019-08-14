@@ -50,6 +50,13 @@ class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Mod
     {
         /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = $observer->getPayment();
+
+        // Do not cancel authorize when accept authorize is failed.
+        // buckaroo_failed_authorize is set in Push.php
+        if ($payment->getAdditionalInformation('buckaroo_failed_authorize') == 1) {
+            return $this;
+        }
+
         $paymentMethodAction = $payment->getMethodInstance()->getConfigPaymentAction();
 
         /** The first characters are "buckaroo3extended_" which are the same for all methods.

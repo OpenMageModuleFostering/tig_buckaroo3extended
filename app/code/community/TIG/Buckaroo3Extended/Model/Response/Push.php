@@ -2,6 +2,7 @@
 class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Model_Response_Abstract
 {
     const PAYMENTCODE = 'buckaroo3extended';
+    const BUCK_PUSH_ACCEPT_AUTHORIZE_TYPE = 'I013';
 
     /**
      * @var Mage_Sales_Model_Order
@@ -412,6 +413,19 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
             Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/cancel_on_failed', $this->_order->getStoreId())
             && $this->_order->canCancel()
         ) {
+            /* Do not cancel order on a failed authorize, because it will send a cancel authorize /cancel reservation
+             * message to Buckaroo, this is not needed/correct.
+             * brq_transaction_type = Afterpay
+             * brq_datarequest = Klarna
+             */
+            if ($this->_postArray['brq_transaction_type'] == self::BUCK_PUSH_ACCEPT_AUTHORIZE_TYPE ||
+                $this->_postArray['brq_datarequest'] != ''
+                ) {
+                $payment = $this->_order->getPayment();
+                $payment->setAdditionalInformation('buckaroo_failed_authorize', 1);
+                $payment->save();
+            }
+
             $this->_order->cancel();
         }
 

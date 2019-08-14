@@ -113,8 +113,8 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_Klarna_PaymentMethodT
                     'day' => '10'
                 )
             ),
-            'buckaroo3extended_klarna_BPE_customer_gender' => 1,
-            'buckaroo3extended_klarna_BPE_customer_phonenumber' => '0612345678',
+            'buckaroo3extended_klarna_BPE_Customergender' => 1,
+            'buckaroo3extended_klarna_bpe_customer_phone_number' => '0612345678',
         );
 
         Mage::app()->getRequest()->setPost($postArray);

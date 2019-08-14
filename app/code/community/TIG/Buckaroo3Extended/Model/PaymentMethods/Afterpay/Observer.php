@@ -745,7 +745,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer extends TIG_B
             $vars['customVars'][$this->_method] = $requestArray;
         }
 
-        $shippingCosts = round($creditmemo->getBaseShippingAmount(), 2);
+        $shippingCosts = round($creditmemo->getBaseShippingAmount() + $creditmemo->getBaseShippingTaxAmount(), 2);
 
         if ($shippingCosts > 0) {
             $shippingInfo = array(

@@ -67,8 +67,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_PaymentMethod extends TI
         );
 
         $postArray = array(
-            'BPE_customer_gender'      => $post[$this->_code . '_BPE_customer_gender'],
-            'BPE_customer_phonenumber' => $post[$this->_code . '_BPE_customer_phonenumber'],
+            'BPE_customer_gender'      => $post[$this->_code . '_BPE_Customergender'],
+            'BPE_customer_phonenumber' => $post[$this->_code . '_bpe_customer_phone_number'],
             'BPE_customer_dob'         => $customerDob,
         );
 

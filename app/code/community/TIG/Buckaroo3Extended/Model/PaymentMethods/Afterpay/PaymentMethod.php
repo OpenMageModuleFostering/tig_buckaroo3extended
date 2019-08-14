@@ -39,7 +39,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
 
         $post = Mage::app()->getRequest()->getPost();
 
-        $accountNumber = $post[$this->_code.'_bpe_customer_account_number'];
+        $accountNumber = isset($post[$this->_code . '_bpe_customer_account_number']) ? $post[$this->_code . '_bpe_customer_account_number'] : '';
 
         $customerBirthDate = date(
             'Y-m-d', strtotime($post['payment'][$this->_code]['year']
@@ -48,20 +48,20 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
         );
 
         $array = array(
-            'BPE_Customergender'    => $post[$this->_code.'_BPE_Customergender'],
+            'BPE_Customergender'    => $post[$this->_code . '_BPE_Customergender'],
             'BPE_AccountNumber'     => $this->filterAccount($accountNumber),
-            'BPE_PhoneNumber'       => $post[$this->_code.'_bpe_customer_phone_number'],
+            'BPE_PhoneNumber'       => $post[$this->_code . '_bpe_customer_phone_number'],
             'BPE_customerbirthdate' => $customerBirthDate,
-            'BPE_B2B'               => (int)$post['buckaroo3extended_afterpay_BPE_BusinessSelect'],
+            'BPE_B2B'               => (int)$post[$this->_code . '_BPE_BusinessSelect'],
             'BPE_Accept'            => 'true',
         );
 
         if((int)$array['BPE_B2B'] == 2){
             $additionalArray = array(
-                'BPE_CompanyCOCRegistration' => $post['buckaroo3extended_afterpay_BPE_CompanyCOCRegistration'],
-                'BPE_CompanyName'            => $post['buckaroo3extended_afterpay_BPE_CompanyName'],
-                'BPE_CostCentre'             => $post['buckaroo3extended_afterpay_BPE_CostCentre'],
-                'BPE_VatNumber'              => $post['buckaroo3extended_afterpay_BPE_VatNumber'],
+                'BPE_CompanyCOCRegistration' => $post[$this->_code . '_BPE_CompanyCOCRegistration'],
+                'BPE_CompanyName'            => $post[$this->_code . '_BPE_CompanyName'],
+                'BPE_CostCentre'             => $post[$this->_code . '_BPE_CostCentre'],
+                'BPE_VatNumber'              => $post[$this->_code . '_BPE_VatNumber'],
             );
 
             $array = array_merge($array,$additionalArray);
@@ -76,8 +76,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
     {
         $postData = Mage::app()->getRequest()->getPost();
         if (
-            !array_key_exists('buckaroo3extended_afterpay_bpe_accept', $postData)
-            || $postData['buckaroo3extended_afterpay_bpe_accept'] != 'checked'
+            !array_key_exists($this->_code . '_bpe_accept', $postData)
+            || $postData[$this->_code . '_bpe_accept'] != 'checked'
         ) {
             Mage::throwException(
                 Mage::helper('buckaroo3extended')->__('Please accept the terms and conditions.')

@@ -665,7 +665,11 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
 	    //turn into string and add the secret key to the end
 	    $signatureString = '';
 	    foreach($sortableArray as $key => $value) {
-            $value = urldecode($value);
+            if ('brq_SERVICE_masterpass_CustomerPhoneNumber' !== $key
+                && 'brq_SERVICE_masterpass_ShippingRecipientPhoneNumber' !== $key
+            ) {
+                $value = urldecode($value);
+            }
 	        $signatureString .= $key . '=' . $value;
 	    }
 	    $signatureString .= Mage::getStoreConfig('buckaroo/buckaroo3extended/digital_signature', $this->_order->getStoreId());

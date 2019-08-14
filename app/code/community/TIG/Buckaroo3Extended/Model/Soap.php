@@ -122,6 +122,11 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
 
         $client->thumbprint = $this->_vars['thumbprint'];
 
+        // Get the order so we can get the storeId relevant for this order
+        $order = Mage::getModel('sales/order')->load($this->_vars['orderId'], 'increment_id');
+        // And pass the storeId to the WSDL client
+        $client->storeId = $order->getStoreId();
+
         $TransactionRequest = new Body();
         $TransactionRequest->Currency = $this->_vars['currency'];
         $TransactionRequest->AmountDebit = round($this->_vars['amountDebit'], 2);
@@ -214,7 +219,7 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
         }
 
         $client->__SetLocation($location);
-        
+
         try
         {
             $response = $client->TransactionRequest($TransactionRequest);
@@ -425,6 +430,12 @@ class SoapClientWSSEC extends SoapClient
      */
     public $thumbprint = '';
 
+    /**
+     * StoreId for Certificate
+     * @var int
+     */
+    public $storeId = null;
+
     public function __doRequest ($request , $location , $action , $version , $one_way = 0 )
     {
         // Add code to inspect/dissect/debug/adjust the XML given in $request here
@@ -501,7 +512,13 @@ class SoapClientWSSEC extends SoapClient
         //Canonicalize nodeset
         $signedINFO = $this->GetCanonical($SignedInfoNodeSet);
 
-        $certificateId = Mage::getStoreConfig('buckaroo/buckaroo3extended/certificate_selection', Mage::app()->getStore()->getId());
+        // If the storeId has been configured specifically, use the current value. Otherwise, try to get
+        // the store Id from Magento. If there's only 1 store view, this default will always pick certificate #1
+        if (!$this->storeId) {
+            $this->storeId = Mage::app()->getStore()->getId();
+        }
+
+        $certificateId = Mage::getStoreConfig('buckaroo/buckaroo3extended/certificate_selection', $this->storeId);
         $certificate = Mage::getModel('buckaroo3extended/certificate')->load($certificateId)->getCertificate();
 
         $priv_key = substr($certificate, 0, 8192);
@@ -539,8 +556,6 @@ class SoapClientWSSEC extends SoapClient
         $SecurityTokenReference->appendChild($KeyIdentifier);
         $KeyTypeNode->appendChild($SecurityTokenReference);
         $sigNodeSet->appendChild($KeyTypeNode);
-
-
 
         return $domDocument;
     }

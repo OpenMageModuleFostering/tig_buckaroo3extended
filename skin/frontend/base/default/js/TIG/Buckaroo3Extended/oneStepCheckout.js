@@ -6,260 +6,260 @@ oldDay = '';
 oldMonth = '';
 oldYear = '';
 oldPhone = '';
-originalAddress = jQuery('#billing-address-select option:selected').val();
+originalAddress = jQuery_144('#billing-address-select option:selected').val();
 changedAddress = false;
-jQuery("#billing\\:firstname").change(
+jQuery_144("#billing\\:firstname").change(
     function() {
-        firstname = jQuery(this).val();
-        
+        firstname = jQuery_144(this).val();
+
         if (
-            !jQuery('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val() 
-            || jQuery('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val() == oldFirstname
+            !jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val()
+            || jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val() == oldFirstname
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val(firstname);
-            sendData(jQuery('#buckaroo3extended_onlinegiro_BPE_Customerfirstname'));
+            jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerfirstname').val(firstname);
+            sendData(jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerfirstname'));
         }
-        
+
         if (
-            !jQuery('#buckaroo3extended_payperemail_BPE_Customerfirstname').val() 
-            || jQuery('#buckaroo3extended_payperemail_BPE_Customerfirstname').val() == oldFirstname
+            !jQuery_144('#buckaroo3extended_payperemail_BPE_Customerfirstname').val()
+            || jQuery_144('#buckaroo3extended_payperemail_BPE_Customerfirstname').val() == oldFirstname
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_payperemail_BPE_Customerfirstname').val(firstname);
-            sendData(jQuery('#buckaroo3extended_payperemail_BPE_Customerfirstname'));
+            jQuery_144('#buckaroo3extended_payperemail_BPE_Customerfirstname').val(firstname);
+            sendData(jQuery_144('#buckaroo3extended_payperemail_BPE_Customerfirstname'));
         }
-        
-        jQuery('#buckaroo3extended_paymentguarantee_BPE_Customername').html(
-            firstname + ' ' + jQuery("#billing\\:lastname").val()
+
+        jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customername').html(
+            firstname + ' ' + jQuery_144("#billing\\:lastname").val()
         );
-        
-        jQuery('#buckaroo3extended_transfer_BPE_Customername').html(
-            firstname + ' ' + jQuery("#billing\\:lastname").val()
+
+        jQuery_144('#buckaroo3extended_transfer_BPE_Customername').html(
+            firstname + ' ' + jQuery_144("#billing\\:lastname").val()
         );
-        
-        jQuery('#buckaroo3extended_directdebit_account_owner').val(
-            firstname + ' ' + jQuery("#billing\\:lastname").val()
+
+        jQuery_144('#buckaroo3extended_directdebit_account_owner').val(
+            firstname + ' ' + jQuery_144("#billing\\:lastname").val()
         );
-        
-        jQuery('#buckaroo3extended_empayment_BPE_Accountholder').val(
-            firstname + ' ' + jQuery("#billing\\:lastname").val()
+
+        jQuery_144('#buckaroo3extended_empayment_BPE_Accountholder').val(
+            firstname + ' ' + jQuery_144("#billing\\:lastname").val()
         );
-        
+
         oldFirstname = firstname;
     }
 );
-jQuery("#billing\\:lastname").change(
+jQuery_144("#billing\\:lastname").change(
     function() {
-        lastname = jQuery(this).val();
-        
+        lastname = jQuery_144(this).val();
+
         if (
-            !jQuery('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val() 
-            || jQuery('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val() == oldLastname
+            !jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val()
+            || jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val() == oldLastname
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val(lastname);
-            sendData(jQuery('#buckaroo3extended_onlinegiro_BPE_Customerlastname'));
+            jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerlastname').val(lastname);
+            sendData(jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customerlastname'));
         }
-        
+
         if (
-            !jQuery('#buckaroo3extended_payperemail_BPE_Customerlastname').val() 
-            || jQuery('#buckaroo3extended_payperemail_BPE_Customerlastname').val() == oldLastname
+            !jQuery_144('#buckaroo3extended_payperemail_BPE_Customerlastname').val()
+            || jQuery_144('#buckaroo3extended_payperemail_BPE_Customerlastname').val() == oldLastname
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_payperemail_BPE_Customerlastname').val(lastname);
-            sendData(jQuery('#buckaroo3extended_payperemail_BPE_Customerlastname'));
+            jQuery_144('#buckaroo3extended_payperemail_BPE_Customerlastname').val(lastname);
+            sendData(jQuery_144('#buckaroo3extended_payperemail_BPE_Customerlastname'));
         }
-        
-        jQuery('#buckaroo3extended_paymentguarantee_BPE_Customername').html(
-            jQuery("#billing\\:firstname").val() + ' ' + lastname
+
+        jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customername').html(
+            jQuery_144("#billing\\:firstname").val() + ' ' + lastname
         );
-        
-        jQuery('#buckaroo3extended_transfer_BPE_Customername').html(
-            jQuery("#billing\\:firstname").val() + ' ' + lastname
+
+        jQuery_144('#buckaroo3extended_transfer_BPE_Customername').html(
+            jQuery_144("#billing\\:firstname").val() + ' ' + lastname
         );
-        
-        jQuery('#buckaroo3extended_directdebit_account_owner').val(
-            jQuery("#billing\\:firstname").val() + ' ' + lastname
+
+        jQuery_144('#buckaroo3extended_directdebit_account_owner').val(
+            jQuery_144("#billing\\:firstname").val() + ' ' + lastname
         );
-        
-        jQuery('#buckaroo3extended_empayment_BPE_Accountholder').val(
-            jQuery("#billing\\:firstname").val() + ' ' + lastname
+
+        jQuery_144('#buckaroo3extended_empayment_BPE_Accountholder').val(
+            jQuery_144("#billing\\:firstname").val() + ' ' + lastname
         );
-        
+
         oldLastname = lastname;
     }
 );
-jQuery("#billing\\:email").change(
+jQuery_144("#billing\\:email").change(
     function() {
-        email = jQuery(this).val();
-        
+        email = jQuery_144(this).val();
+
         if (
-            !jQuery('#buckaroo3extended_onlinegiro_BPE_Customermail').val() 
-            || jQuery('#buckaroo3extended_onlinegiro_BPE_Customermail').val() == oldEmail
+            !jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customermail').val()
+            || jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customermail').val() == oldEmail
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_onlinegiro_BPE_Customermail').val(email);
-            sendData(jQuery('#buckaroo3extended_onlinegiro_BPE_Customermail'));
+            jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customermail').val(email);
+            sendData(jQuery_144('#buckaroo3extended_onlinegiro_BPE_Customermail'));
         }
-        
+
         if (
-            !jQuery('#buckaroo3extended_transfer_BPE_Customermail').val() 
-            || jQuery('#buckaroo3extended_transfer_BPE_Customermail').val() == oldEmail
+            !jQuery_144('#buckaroo3extended_transfer_BPE_Customermail').val()
+            || jQuery_144('#buckaroo3extended_transfer_BPE_Customermail').val() == oldEmail
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_transfer_BPE_Customermail').val(email);
-            sendData(jQuery('#buckaroo3extended_transfer_BPE_Customermail'));
+            jQuery_144('#buckaroo3extended_transfer_BPE_Customermail').val(email);
+            sendData(jQuery_144('#buckaroo3extended_transfer_BPE_Customermail'));
         }
-        
+
         if (
-            !jQuery('#buckaroo3extended_payperemail_BPE_Customermail').val() 
-            || jQuery('#buckaroo3extended_payperemail_BPE_Customermail').val() == oldEmail
+            !jQuery_144('#buckaroo3extended_payperemail_BPE_Customermail').val()
+            || jQuery_144('#buckaroo3extended_payperemail_BPE_Customermail').val() == oldEmail
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_payperemail_BPE_Customermail').val(email);
-            sendData(jQuery('#buckaroo3extended_payperemail_BPE_Customermail'));
+            jQuery_144('#buckaroo3extended_payperemail_BPE_Customermail').val(email);
+            sendData(jQuery_144('#buckaroo3extended_payperemail_BPE_Customermail'));
         }
-        
+
         oldEmail = email;
     }
 );
-jQuery("#billing\\:telephone").change(
+jQuery_144("#billing\\:telephone").change(
     function() {
-        phone = jQuery(this).val();
-        
+        phone = jQuery_144(this).val();
+
         if (
-            !jQuery('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val() 
-            || jQuery('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val() == oldPhone
+            !jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val()
+            || jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val() == oldPhone
             || changedAddress
         ) {
-            jQuery('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val(phone);
-            sendData(jQuery('#buckaroo3extended_paymentguarantee_BPE_Customerphone'));
+            jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customerphone').val(phone);
+            sendData(jQuery_144('#buckaroo3extended_paymentguarantee_BPE_Customerphone'));
         }
-        
+
         oldPhone = phone;
     }
 );
-jQuery("#billing\\:gender").change(
+jQuery_144("#billing\\:gender").change(
 	function() {
-		gender = jQuery("#billing\\:gender option:selected").val();
-		
+		gender = jQuery_144("#billing\\:gender option:selected").val();
+
 		if (
-			!jQuery("#buckaroo3extended_paymentguarantee_BPE_Customergender option:selected").val()
-			|| jQuery("#buckaroo3extended_paymentguarantee_BPE_Customergender option:selected").val() == oldGender
+			!jQuery_144("#buckaroo3extended_paymentguarantee_BPE_Customergender option:selected").val()
+			|| jQuery_144("#buckaroo3extended_paymentguarantee_BPE_Customergender option:selected").val() == oldGender
             || changedAddress
         ) {
-			jQuery("#buckaroo3extended_paymentguarantee_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
+            jQuery_144("#buckaroo3extended_paymentguarantee_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
 		}
-		
+
 		if (
-			!jQuery("#buckaroo3extended_onlinegiro_BPE_Customergender option:selected").val()
-			|| jQuery("#buckaroo3extended_onlinegiro_BPE_Customergender option:selected").val() == oldGender
+			!jQuery_144("#buckaroo3extended_onlinegiro_BPE_Customergender option:selected").val()
+			|| jQuery_144("#buckaroo3extended_onlinegiro_BPE_Customergender option:selected").val() == oldGender
             || changedAddress
         ) {
-			jQuery("#buckaroo3extended_onlinegiro_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
+            jQuery_144("#buckaroo3extended_onlinegiro_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
 		}
-		
+
 		if (
-			!jQuery("#buckaroo3extended_transfer_BPE_Customergender option:selected").val()
-			|| jQuery("#buckaroo3extended_transfer_BPE_Customergender option:selected").val() == oldGender
+			!jQuery_144("#buckaroo3extended_transfer_BPE_Customergender option:selected").val()
+			|| jQuery_144("#buckaroo3extended_transfer_BPE_Customergender option:selected").val() == oldGender
             || changedAddress
         ) {
-			jQuery("#buckaroo3extended_transfer_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
+            jQuery_144("#buckaroo3extended_transfer_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
 		}
-		
+
 		if (
-			!jQuery("#buckaroo3extended_payperemail_BPE_Customergender option:selected").val()
-			|| jQuery("#buckaroo3extended_payperemail_BPE_Customergender option:selected").val() == oldGender
+			!jQuery_144("#buckaroo3extended_payperemail_BPE_Customergender option:selected").val()
+			|| jQuery_144("#buckaroo3extended_payperemail_BPE_Customergender option:selected").val() == oldGender
             || changedAddress
         ) {
-			jQuery("#buckaroo3extended_payperemail_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
+            jQuery_144("#buckaroo3extended_payperemail_BPE_Customergender option[value='" + gender + "']").attr('selected', 'selected');
 		}
-		
+
 		oldGender = gender;
 	}
 );
-jQuery("#billing\\:day").change(
+jQuery_144("#billing\\:day").change(
 	function() {
-		day = jQuery(this).val();
-        
+		day = jQuery_144(this).val();
+
         if (
-            !jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val() 
-            || jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val() == oldDay
+            !jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val()
+            || jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val() == oldDay
             || changedAddress
         ) {
-            jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val(day);
-            sendData(jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day"));
+            jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day").val(day);
+            sendData(jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:day"));
         }
-        
+
         if (
-            !jQuery('#overschrijving\\:payment\\:day').val() 
-            || jQuery('#overschrijving\\:payment\\:day').val() == oldDay
+            !jQuery_144('#overschrijving\\:payment\\:day').val()
+            || jQuery_144('#overschrijving\\:payment\\:day').val() == oldDay
             || changedAddress
         ) {
-        	jQuery('#overschrijving\\:payment\\:day').val(day);
-        	sendData(jQuery('#overschrijving\\:payment\\:day'));
+            jQuery_144('#overschrijving\\:payment\\:day').val(day);
+        	sendData(jQuery_144('#overschrijving\\:payment\\:day'));
         }
-		
+
 		oldDay = day;
 	}
 );
-jQuery("#billing\\:month").change(
+jQuery_144("#billing\\:month").change(
 	function() {
-		month = jQuery(this).val();
-        
+		month = jQuery_144(this).val();
+
         if (
-            !jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val() 
-            || jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val() == oldMonth
+            !jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val()
+            || jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val() == oldMonth
             || changedAddress
         ) {
-            jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val(month);
-            sendData(jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month"));
+            jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month").val(month);
+            sendData(jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:month"));
         }
-        
+
         if (
-            !jQuery('#overschrijving\\:payment\\:month').val() 
-            || jQuery('#overschrijving\\:payment\\:month').val() == oldMonth
+            !jQuery_144('#overschrijving\\:payment\\:month').val()
+            || jQuery_144('#overschrijving\\:payment\\:month').val() == oldMonth
             || changedAddress
         ) {
-        	jQuery('#overschrijving\\:payment\\:month').val(month);
-        	sendData(jQuery('#overschrijving\\:payment\\:month'));
+            jQuery_144('#overschrijving\\:payment\\:month').val(month);
+        	sendData(jQuery_144('#overschrijving\\:payment\\:month'));
         }
-		
+
 		oldMonth = month;
 	}
 );
-jQuery("#billing\\:year").change(
+jQuery_144("#billing\\:year").change(
 	function() {
-		year = jQuery(this).val();
-        
+		year = jQuery_144(this).val();
+
         if (
-            !jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val() 
-            || jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val() == oldYear
+            !jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val()
+            || jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val() == oldYear
             || changedAddress
         ) {
-            jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val(year);
-            sendData(jQuery("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year"));
+            jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year").val(year);
+            sendData(jQuery_144("#container_payment_method_buckaroo3extended_paymentguarantee #payment\\:year"));
         }
-        
+
         if (
-            !jQuery('#overschrijving\\:payment\\:year').val() 
-            || jQuery('#overschrijving\\:payment\\:year').val() == oldYear
+            !jQuery_144('#overschrijving\\:payment\\:year').val()
+            || jQuery_144('#overschrijving\\:payment\\:year').val() == oldYear
             || changedAddress
         ) {
-        	jQuery('#overschrijving\\:payment\\:year').val(year);
-        	sendData(jQuery('#overschrijving\\:payment\\:year'));
+            jQuery_144('#overschrijving\\:payment\\:year').val(year);
+        	sendData(jQuery_144('#overschrijving\\:payment\\:year'));
         }
-		
+
 		oldYear = year;
 	}
 );
 
-jQuery('#billing-address-select').change(
+jQuery_144('#billing-address-select').change(
     function() {
-        if (!jQuery('#billing-address-select option:selected').val()) {
+        if (!jQuery_144('#billing-address-select option:selected').val()) {
             changedAddress = true;
-        } else if (jQuery('#billing-address-select option:selected').val() == originalAddress) {
+        } else if (jQuery_144('#billing-address-select option:selected').val() == originalAddress) {
             changedAddress = false;
         }
     }

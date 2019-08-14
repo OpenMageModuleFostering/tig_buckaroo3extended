@@ -499,7 +499,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
             }
 
             $article['ArticleNumber']['value']   = $item->getId();
-            $article['ArticlePrice']['value']    = $item->getBasePrice();
+            $article['ArticlePrice']['value']    = $item->getBasePriceInclTax();
             $article['ArticleQuantity']['value'] = round($item->getQtyOrdered(), 0);
             $article['ArticleTitle']['value']    = $item->getName();
             $article['ArticleVat']['value']      = $item->getTaxPercent();
@@ -871,12 +871,19 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
         $fee    = (double) $this->_order->getBuckarooFee();
         $feeTax = (double) $this->_order->getBuckarooFeeTax();
 
+        $store = $this->_order->getStore();
+        $taxCalculation = Mage::getModel('tax/calculation');
+        $request = $taxCalculation->getRateRequest(null, null, null, $store);
+        $taxClassId = Mage::getStoreConfig('tax/classes/buckaroo_fee', $store);
+        $percent = $taxCalculation->getRate($request->setProductClassId($taxClassId));
+
+
         if ($fee > 0) {
             $article['ArticleNumber']['value']   = 1;
             $article['ArticlePrice']['value']    = round($fee + $feeTax, 2);
             $article['ArticleQuantity']['value'] = 1;
             $article['ArticleTitle']['value']    = 'Servicekosten';
-            $article['ArticleVat']['value']      = 0.00;
+            $article['ArticleVat']['value']      = (double) $percent;
 
             return $article;
         }
@@ -891,12 +898,18 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Klarna_Observer extends TIG_Buc
     {
         $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
 
+        $store = $this->_order->getStore();
+        $taxCalculation = Mage::getModel('tax/calculation');
+        $request = $taxCalculation->getRateRequest(null, null, null, $store);
+        $taxClassId = Mage::getStoreConfig('tax/classes/shipping_tax_class', $store);
+        $percent = $taxCalculation->getRate($request->setProductClassId($taxClassId));
+
         if ($shippingCosts > 0) {
             $article['ArticleNumber']['value']   = 2;
             $article['ArticlePrice']['value']    = $shippingCosts;
             $article['ArticleQuantity']['value'] = 1;
             $article['ArticleTitle']['value']    = 'Verzendkosten';
-            $article['ArticleVat']['value']      = 0.00;
+            $article['ArticleVat']['value']      = (double) $percent;
 
             return $article;
         }

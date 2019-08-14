@@ -18,4 +18,8 @@
             <file>../../Buckaroo3Extended/Exception.php</file>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover-unit.xml"/>
+    </logging>
 </phpunit>

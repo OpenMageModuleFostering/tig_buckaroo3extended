@@ -140,6 +140,11 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
             }
         }
 
+        // The channel set in the vars takes precedence over the above condition
+        if (isset($this->_vars['channel'])) {
+            $requestChannel = $this->_vars['channel'];
+        }
+
         $client->thumbprint = $this->_vars['thumbprint'];
 
         // Get the order so we can get the storeId relevant for this order
@@ -371,6 +376,7 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
                                 $requestParameter          = new RequestParameter();
                                 $requestParameter->Name    = $articleName;
                                 $requestParameter->GroupID = $groupId;
+                                $requestParameter->Group   = "Article";
                                 $requestParameter->_       = $articleValue['value'];
                                 $requestParameters[]       = $requestParameter;
                             }

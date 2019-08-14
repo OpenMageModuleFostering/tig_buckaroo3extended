@@ -12,6 +12,7 @@ CURRENT_DIR=`pwd`
 BUILDENV="/tmp/magento"
 mkdir -p ${BUILDENV}
 PUBLIC_DIR="${BUILDENV}/public/"
+COMPOSER_HOME="$HOME/.composer/vendor/bin/"
 
 mkdir -p "${PUBLIC_DIR}"
 
@@ -46,4 +47,4 @@ cd "${PUBLIC_DIR}/.modman/project";
 mkdir -p "${PUBLIC_DIR}var/session";
 chmod -R 777 "${PUBLIC_DIR}var/session";
 
-phpunit -c "${PUBLIC_DIR}/app/code/community/TIG/Buckaroo3Extended/Test/phpunit.xml"
+${COMPOSER_HOME}phpunit -c "${PUBLIC_DIR}/app/code/community/TIG/Buckaroo3Extended/Test/phpunit.xml"

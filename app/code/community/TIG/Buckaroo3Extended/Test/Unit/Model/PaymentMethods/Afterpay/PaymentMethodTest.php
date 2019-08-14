@@ -75,10 +75,7 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_Afterpay_PaymentMetho
     protected function _getInstance()
     {
         if ($this->_instance === null) {
-            $this->_instance = $this
-                ->getMockBuilder('TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod')
-                ->setMethods(array('getConfigPaymentAction', 'getInfoInstance'))
-                ->getMock();
+            $this->_instance = new TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod();
         }
 
         return $this->_instance;
@@ -158,10 +155,7 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_Afterpay_PaymentMetho
     public function testCanCapture($paymentAction, $expected)
     {
         $instance = $this->_getInstance();
-        $instance->expects($this->once())
-            ->method('getConfigPaymentAction')
-            ->will($this->returnValue($paymentAction));
-
+        Mage::app()->getStore()->setConfig('buckaroo/buckaroo3extended_afterpay/payment_action', $paymentAction);
         $result = $instance->canCapture();
 
         $this->assertEquals($expected, $result);
@@ -184,10 +178,10 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_Afterpay_PaymentMetho
     public function testShouldThrowAnExceptionIfCantCapture()
     {
         $instance = $this->_getInstance();
-        $instance->expects($this->once())
-            ->method('getConfigPaymentAction')
-            ->will($this->returnValue(Mage_Payment_Model_Method_Abstract::ACTION_ORDER));
-
+        Mage::app()->getStore()->setConfig(
+            'buckaroo/buckaroo3extended_afterpay/payment_action',
+            Mage_Payment_Model_Method_Abstract::ACTION_ORDER
+        );
         $instance->capture(new Varien_Object(), 0);
     }
 
@@ -196,9 +190,7 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_Afterpay_PaymentMetho
         $mockPaymentInfo = $this->_getMockPayment();
 
         $instance = $this->_getInstance();
-        $instance->expects($this->any())
-            ->method('getInfoInstance')
-            ->will($this->returnValue($mockPaymentInfo));
+        $instance->setData('info_instance', $mockPaymentInfo);
 
         $postData = array(
             $instance->getCode() . '_bpe_accept'                  => 'checked',

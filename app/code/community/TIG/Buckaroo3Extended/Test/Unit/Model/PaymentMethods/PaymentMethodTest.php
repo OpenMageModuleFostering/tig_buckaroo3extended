@@ -103,4 +103,51 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_PaymentMethods_PaymentMethodTest ext
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @return array
+     */
+    public function hideForPosPaymentProvider()
+    {
+        return array(
+            'no header, not pospayment' => array(
+                null,
+                'buckaroo3extended_tig',
+                false
+            ),
+            'with header, not pospayment' => array(
+                '1234567',
+                'buckaroo3extended_tig',
+                true
+            ),
+            'no header, is pospayment' => array(
+                null,
+                'buckaroo3extended_pospayment',
+                false
+            ),
+            'with header, is pospayment' => array(
+                '8901234',
+                'buckaroo3extended_pospayment',
+                false
+            )
+        );
+    }
+
+    /**
+     * @param $terminalid
+     * @param $methodCode
+     * @param $expected
+     *
+     * @dataProvider hideForPosPaymentProvider
+     */
+    public function testHideForPosPayment($terminalid, $methodCode, $expected)
+    {
+        $_SERVER['HTTP_POS_TERMINAL_ID'] = $terminalid;
+
+        $instance = $this->_getInstance();
+        $this->setProperty('_code', $methodCode, $instance);
+
+        $result = $instance->hideForPosPayment();
+        $this->assertEquals($expected, $result);
+    }
 }

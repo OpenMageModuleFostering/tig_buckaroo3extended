@@ -70,6 +70,15 @@
 		</reference>
 	</onestepcheckout_index_index>
 
+    <buckaroo3extended_checkout_pospaymentpending>
+        <reference name="root">
+            <action method="setTemplate"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="content">
+            <block type="buckaroo3extended/paymentMethods_pospayment_checkout_pendingPayment" name="buckaroo_postpayment_pendingpayment" template="buckaroo3extended/pospayment/checkout/pendingpayment.phtml" />
+        </reference>
+    </buckaroo3extended_checkout_pospaymentpending>
+
     <sales_order_print>
         <reference name="order_totals">
             <block type="buckaroo3extended/paymentFee_sales_order_totals_fee" before="tax" name="buckaroo_fee"/>

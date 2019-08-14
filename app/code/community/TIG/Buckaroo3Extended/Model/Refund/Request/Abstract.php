@@ -208,7 +208,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Request_Abstract extends TIG_Buckaroo3E
             'refund_initiated_in_magento' => 1,
         );
 
-        if (isset($this->_vars['customParaeters'])) {
+        if (isset($this->_vars['customParameters'])) {
             $this->_vars['customParameters'] = array_merge($this->_vars['customParameters'], $array);
         } else {
             $this->_vars['customParameters'] = $array;

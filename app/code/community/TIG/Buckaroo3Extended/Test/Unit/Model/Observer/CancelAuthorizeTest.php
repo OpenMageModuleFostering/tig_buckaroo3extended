@@ -114,6 +114,11 @@ class TIG_Buckaroo3Extended_Test_Unit_Model_Observer_CancelAuthorizeTest extends
             ),
             array(
                 Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE,
+                'buckaroo3extended_klarna',
+                'once'
+            ),
+            array(
+                Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE,
                 'buckaroo3extended_notAllowedMethod',
                 'never'
             )

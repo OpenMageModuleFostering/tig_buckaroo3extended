@@ -266,7 +266,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $parsedResponse = $this->_parseResponse();
         $billingCountry = $this->_order->getBillingAddress()->getCountry();
-        $serviceCode = $this->_response->ServiceCode;
 
         $errorMessage = $this->_getCorrectFailureMessage($message);
 

@@ -148,6 +148,10 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
 
         try {
             list($module, $processedPush) = $this->_processPushAccordingToType();
+
+            if (!is_object(($module))) {
+                $module = Mage::getModel('buckaroo3extended/abstract', $this->_debugEmail);
+            }
         } catch (Exception $e) {
             $this->_debugEmail .= "An Exception occurred: " . $e->getMessage() . "\n";
             $this->_debugEmail .= "\nException trace: " . $e->getTraceAsString() . "\n";
@@ -247,6 +251,7 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
     {
         if (
             $this->_order->getTransactionKey() == $this->_postArray['brq_transactions']
+            || $this->_order->getTransactionKey() == $this->_postArray['brq_datarequest']
             || (isset($this->_postArray['brq_relatedtransaction_partialpayment'])
             && $this->_order->getTransactionKey() == $this->_postArray['brq_relatedtransaction_partialpayment'])
         ) {
@@ -257,16 +262,21 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
         $this->_paymentCode = $this->_order->getPayment()->getMethod();
         $merchantKey        = Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $this->_order->getStoreId());
 
-        //fix for payperemail transactions with different transaction keys but belongs to the same order
-        if (
-            $this->_paymentCode == 'buckaroo3extended_payperemail'
-            && $this->_postArray['brq_transaction_method'] != 'payperemail'
+        //fix for payperemail and klarna transactions with different transaction keys but belongs to the same order
+        if ((
+                ($this->_paymentCode == 'buckaroo3extended_payperemail'
+                    && $this->_postArray['brq_transaction_method'] != 'payperemail'
+                )
+                || ($this->_paymentCode == 'buckaroo3extended_klarna'
+                    && $this->_postArray['brq_primary_service'] == 'klarna'
+                )
+            )
             && $this->_order->getIncrementId() == $this->_postArray['brq_invoicenumber']
             && (
                 isset($this->_postArray['brq_websitekey'])
                 && $merchantKey == $this->_postArray['brq_websitekey']
                )
-        ){
+        ) {
             list($processedPush, $module) = $this->_updateOrderWithKey();
             return array($module, $processedPush);
         }
@@ -303,9 +313,10 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             return array($module, $processedPush);
         }
 
-        // C012 and C017 are Afterpay Capture transactions which don't need an update
+        // C012, C017 and C700 are Afterpay and Klarna Capture transactions which don't need an update
         if ($this->_postArray['brq_transaction_type'] == 'C012'
             || $this->_postArray['brq_transaction_type'] == 'C017'
+            || $this->_postArray['brq_transaction_type'] == 'C700'
         ) {
             list($processedPush, $module) = $this->_updateCapture();
             return array($module, $processedPush);
@@ -385,21 +396,9 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
     {
         $this->_debugEmail .= "Recieved PUSH to update creditmemo. Unfortunately the module does not support creditmemo updates at this time. The PUSH is ignored.";
 
-        $debugEmailConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId());
-        if (empty($debugEmailConfig))
-        {
-            return;
-        }
+        $module = Mage::getModel('buckaroo3extended/abstract', $this->_debugEmail);
 
-        $mail = $this->_debugEmail;
-
-        mail(
-            Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId()),
-            'Buckaroo 3 Extended Debug Email',
-            $mail
-        );
-
-        return $this;
+        return array(true, $module);
     }
 
     /**
@@ -409,21 +408,9 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
     {
         $this->_debugEmail .= "Recieved PUSH to update capture. Unfortunately the module does not support capture updates at this time. The PUSH is ignored.";
 
-        $debugEmailConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId());
-        if (empty($debugEmailConfig))
-        {
-            return;
-        }
+        $module = Mage::getModel('buckaroo3extended/abstract', $this->_debugEmail);
 
-        $mail = $this->_debugEmail;
-
-        mail(
-            Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId()),
-            'Buckaroo 3 Extended Debug Email',
-            $mail
-        );
-
-        return $this;
+        return array(true, $module);
     }
 
     protected function _newRefund()

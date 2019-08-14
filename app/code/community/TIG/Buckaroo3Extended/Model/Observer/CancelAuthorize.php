@@ -39,7 +39,7 @@
 class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Model_Abstract
 {
     /** @var array */
-    private $_allowedMethods = array('afterpay', 'afterpay2');
+    private $_allowedMethods = array('afterpay', 'afterpay2', 'klarna');
 
     /**
      * @param Varien_Event_Observer $observer
@@ -58,8 +58,9 @@ class TIG_Buckaroo3Extended_Model_Observer_CancelAuthorize extends Mage_Core_Mod
 
         if (in_array($paymentMethodCode, $this->_allowedMethods)
             && $paymentMethodAction == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE
+            && !$payment->getSkipCancelAuthorize()
         ) {
-            /** @var TIG_Buckaroo3Extended_Model_Request_CancelAuthorize $captureRequest */
+            /** @var TIG_Buckaroo3Extended_Model_Request_CancelAuthorize $cancelAuthorizeRequest */
             $cancelAuthorizeRequest = Mage::getModel(
                 'buckaroo3extended/request_cancelAuthorize',
                 array(

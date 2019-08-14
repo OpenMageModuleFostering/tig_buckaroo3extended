@@ -354,7 +354,13 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         } else {
             $currencyCode = $this->_order->getOrderCurrencyCode();
         }
-        $brqAmount = Mage::app()->getLocale()->currency($currencyCode)->toCurrency($this->_postArray['brq_amount']);
+
+        $amountToCurrency = $this->_postArray['brq_amount'];
+        if (!isset($this->_postArray['brq_amount']) || $this->_postArray['brq_amount'] <= 0) {
+            $amountToCurrency = $this->_order->getGrandTotal();
+        }
+
+        $brqAmount = Mage::app()->getLocale()->currency($currencyCode)->toCurrency($amountToCurrency);
 
         if ($paymentMethod->getConfigPaymentAction() != Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
             $description .= 'Total amount of ' . $brqAmount . ' has been paid';

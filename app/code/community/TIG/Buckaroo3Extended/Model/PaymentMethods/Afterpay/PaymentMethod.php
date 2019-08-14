@@ -259,6 +259,10 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
             return false;
         }
 
+        if ($this->hideForPosPayment()) {
+            return false;
+        }
+
         $canUseBuckaroo = TIG_Buckaroo3Extended_Model_Request_Availability::canUseBuckaroo($quote);
 
         return $canUseBuckaroo;

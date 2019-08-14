@@ -67,8 +67,8 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Invoice_Totals_Fee
          */
         $invoice = $parent->getInvoice();
 
-        $fee     = $invoice->getOrder()->getBuckarooFee();
-        $baseFee = $invoice->getOrder()->getBaseBuckarooFee();
+        $fee     = $invoice->getBuckarooFee();
+        $baseFee = $invoice->getBaseBuckarooFee();
 
         if ($fee < 0.01 || $baseFee < 0.01) {
             return $this;

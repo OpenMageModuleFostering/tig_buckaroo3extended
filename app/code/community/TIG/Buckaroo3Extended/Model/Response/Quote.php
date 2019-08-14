@@ -78,7 +78,7 @@ class TIG_Buckaroo3Extended_Model_Response_Quote extends TIG_Buckaroo3Extended_M
         return $this->_requiredAction($parsedResponse);
     }
 
-    protected function _success()
+    protected function _success($status = self::BUCKAROO_SUCCESS)
     {
         $this->sendDebugEmail();
 
@@ -86,7 +86,7 @@ class TIG_Buckaroo3Extended_Model_Response_Quote extends TIG_Buckaroo3Extended_M
         Mage::throwException('An error occurred while processing the request');
     }
 
-    protected function _failed()
+    protected function _failed($message = '')
     {
         $this->_debugEmail .= 'The transaction was unsuccessful. \n';
         $this->_debugEmail .= "Returning response parameters.\n";
@@ -97,7 +97,7 @@ class TIG_Buckaroo3Extended_Model_Response_Quote extends TIG_Buckaroo3Extended_M
         );
     }
 
-    protected function _error()
+    protected function _error($message = '')
     {
         $this->_debugEmail .= "The transaction generated an error. \n";
         $this->_debugEmail .= "Returning response parameters.\n";
@@ -108,7 +108,7 @@ class TIG_Buckaroo3Extended_Model_Response_Quote extends TIG_Buckaroo3Extended_M
         );
     }
 
-    protected function _rejected()
+    protected function _rejected($message = '')
     {
         $this->_debugEmail .= "The transaction generated an error. \n";
         $this->_debugEmail .= "Returning response parameters.\n";

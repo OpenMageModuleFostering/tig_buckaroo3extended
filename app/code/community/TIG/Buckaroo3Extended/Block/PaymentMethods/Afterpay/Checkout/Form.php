@@ -27,16 +27,6 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Afterpay_Checkout_Form extends 
         return  $this->getSession()->getData($this->getMethodCode() . '_BPE_CompanyName');
     }
 
-    public function getCostCentre()
-    {
-        return  $this->getSession()->getData($this->getMethodCode() . '_BPE_CostCentre');
-    }
-
-    public function getVatNumber()
-    {
-        return  $this->getSession()->getData($this->getMethodCode() . '_BPE_VatNumber');
-    }
-
     public function getBusinessSelect()
     {
         return  $this->getSession()->getData($this->getMethodCode() . '_BPE_BusinessSelect');

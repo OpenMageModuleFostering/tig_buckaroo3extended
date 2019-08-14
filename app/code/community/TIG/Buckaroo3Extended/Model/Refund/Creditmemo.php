@@ -96,6 +96,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Creditmemo extends TIG_Buckaroo3Extende
 
         $order  = $this->_order;
 
+        /** @var Mage_Sales_Model_Service_Order $service */
         $service = Mage::getModel('sales/service_order', $order);
 
         $savedData = $this->_getItemData($data);
@@ -275,7 +276,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Creditmemo extends TIG_Buckaroo3Extende
         $items = array();
         foreach ($this->_order->getAllItems() as $orderItem)
         {
-            if (!in_array($orderItem->getId(), array_flip($items))) {
+            if (!array_key_exists($orderItem->getId(),$items)) {
 
                 $creditAmount = 0;
                 if (isset($this->_postArray['brq_amount_credit'])) {

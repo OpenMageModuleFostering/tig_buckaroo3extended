@@ -84,8 +84,19 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
 
         $this->_debugEmail = '';
         if (isset($postData['brq_invoicenumber'])) {
+            $invoice = null;
+            if (isset($postData['brq_relatedtransaction_refund'])) {
+                /** @var Mage_Sales_Model_Order_Invoice $invoice */
+                $invoice = Mage::getModel('sales/order_invoice')
+                    ->load($postData['brq_relatedtransaction_refund'], 'transaction_id');
+            }
+
             $this->_postArray = $postData;
             $orderId = $this->_postArray['brq_invoicenumber'];
+
+            if (null !== $invoice && $invoice->getOrderIncrementId() != $this->_postArray['brq_invoicenumber']) {
+                $orderId = $invoice->getOrderIncrementId();
+            }
         } else if (isset($postData['bpe_invoice'])) {
             $this->_restructurePostArray();
             $orderId = $this->_postArray['brq_invoicenumber'];
@@ -199,6 +210,9 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
                 $redirectData['path'] = 'checkout/cart';
                 $redirectData['params'] = array();
             }
+            if(!isset($redirectData['params'])){
+                $redirectData['params'] = array();
+            }
             $this->_redirect($redirectData['path'], $redirectData['params']);
 
             return;
@@ -257,6 +271,23 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             return array($module, $processedPush);
         }
 
+        $amountOrdered = $this->_order->getBaseGrandTotal();
+        if ($this->_postArray['brq_currency'] == $this->_order->getOrderCurrencyCode()) {
+            $amountOrdered = $this->_order->getGrandTotal();
+        }
+
+        // Save an order comment when a partial payment through transfer has been made
+        if ($this->_paymentCode == 'buckaroo3extended_transfer'
+            && $this->_postArray['brq_transaction_method'] == 'transfer'
+            && $this->_postArray['brq_amount'] < $amountOrdered
+            && $this->_order->getTransactionKey() != $this->_postArray['brq_transactions']
+            && $this->_order->getIncrementId() == $this->_postArray['brq_invoicenumber']
+            && (isset($this->_postArray['brq_websitekey']) && $merchantKey == $this->_postArray['brq_websitekey'])
+        ) {
+            list($processedPush, $module) = $this->_updateTransferPartialPaid();
+            return array($module, $processedPush);
+        }
+
         if ($this->_pushIsCreditmemo($this->_postArray)) {
             list($processedPush, $module) = $this->_updateCreditmemo();
             return array($module, $processedPush);
@@ -272,8 +303,36 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
             return array($module, $processedPush);
         }
 
+        // C012 and C017 are Afterpay Capture transactions which don't need an update
+        if ($this->_postArray['brq_transaction_type'] == 'C012'
+            || $this->_postArray['brq_transaction_type'] == 'C017'
+        ) {
+            list($processedPush, $module) = $this->_updateCapture();
+            return array($module, $processedPush);
+        }
+
         Mage::throwException('unable to process PUSH');
         return false;
+    }
+
+    protected function _updateTransferPartialPaid()
+    {
+        $this->_debugEmail .= "Order has been partial paid by Transer method. \n";
+
+        /** @var TIG_Buckaroo3Extended_Model_Response_Push $module */
+        $module = Mage::getModel(
+            'buckaroo3extended/response_push',
+            array(
+                'order'      => $this->_order,
+                'postArray'  => $this->_postArray,
+                'debugEmail' => $this->_debugEmail,
+                'method'     => $this->_paymentCode,
+            )
+        );
+
+        $processedPush = $module->processPartialTransferMessage();
+
+        return array($processedPush, $module);
     }
 
     protected function _updateOrderWithKey()
@@ -325,6 +384,30 @@ class TIG_Buckaroo3Extended_NotifyController extends Mage_Core_Controller_Front_
     protected function _updateCreditmemo()
     {
         $this->_debugEmail .= "Recieved PUSH to update creditmemo. Unfortunately the module does not support creditmemo updates at this time. The PUSH is ignored.";
+
+        $debugEmailConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId());
+        if (empty($debugEmailConfig))
+        {
+            return;
+        }
+
+        $mail = $this->_debugEmail;
+
+        mail(
+            Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId()),
+            'Buckaroo 3 Extended Debug Email',
+            $mail
+        );
+
+        return $this;
+    }
+
+    /**
+     * Capture updates are currently not supported
+     */
+    protected function _updateCapture()
+    {
+        $this->_debugEmail .= "Recieved PUSH to update capture. Unfortunately the module does not support capture updates at this time. The PUSH is ignored.";
 
         $debugEmailConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/debug_email', $this->_order->getStoreId());
         if (empty($debugEmailConfig))

@@ -216,14 +216,15 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
          */
         $payment = $this->_order->getPayment();
         $payment->registerAuthorizationNotification($this->_order->getBaseGrandTotal());
-        $payment->getMethodInstance()->saveAdditionalData($this->_response);
+        $paymentMethodInstance = $payment->getMethodInstance();
+        $paymentMethodInstance->saveAdditionalData($this->_response);
 
         $shouldSend = Mage::getStoreConfig('buckaroo/' . $payment->getMethod() . '/order_email', $this->_order->getStoreId());
 
         /**
-         * Do not send order confirmation email when the payment is still pending.
+         * Only send order confirmation email when payment status allows it.
          */
-        if ($status == self::BUCKAROO_PENDING_PAYMENT) {
+        if (!$paymentMethodInstance->shouldSendOrderConfirmEmailForStatus($status)) {
             $shouldSend = false;
         }
 
@@ -263,11 +264,18 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $this->restoreQuote();
 
+        $parsedResponse = $this->_parseResponse();
+        $billingCountry = $this->_order->getBillingAddress()->getCountry();
+        $serviceCode = $this->_response->ServiceCode;
 
+        $errorMessage = $this->_getCorrectFailureMessage($message);
 
-        Mage::getSingleton('core/session')->addError(
-            $this->_getCorrectFailureMessage($message)
-        );
+        if ($billingCountry == 'NL' && $parsedResponse['code'] == 490) {
+            $responseErrorMessage = $this->getResponseFailureMessage();
+            $errorMessage = strlen($responseErrorMessage) > 0 ? $responseErrorMessage : $errorMessage;
+        }
+
+        Mage::getSingleton('core/session')->addError($errorMessage);
 
         if (Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/cancel_on_failed', $this->_order->getStoreId())) {
             $this->_returnGiftcards($this->_order);
@@ -323,18 +331,6 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $paymentMethod = $this->_order->getPayment()->getMethod();
         switch($paymentMethod){
-            case 'buckaroo3extended_afterpay':
-            case 'buckaroo3extended_afterpay2':
-                Mage::getSingleton('checkout/session')->setData('buckarooAfterpayRejected',true);
-                $message = Mage::helper('buckaroo3extended')->__(
-                    "We are sorry to inform you that the request to pay afterwards with AfterPay is not possible at " .
-                    "this time. This can be due to various (temporary) reasons.<br/><br/> For questions about your " .
-                    "rejection you can contact the customer service of AfterPay. Or you can visit the website of " .
-                    "AfterPay and click 'Frequently asked questions' through this link " .
-                    "<a href='http://www.afterpay.nl/page/consument-faq'>http://www.afterpay.nl/page/consument-faq</a> " .
-                    "in the section 'Datacontrol'.<br/><br/> We advice you to choose a different payment method to complete your order."
-                );
-            break;
             default:
                 $message = Mage::helper('buckaroo3extended')->__(
                     $this->_getCorrectFailureMessage($message)
@@ -435,6 +431,42 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
                     $this->_order->getStoreId())
                 );
         }
+    }
+
+    /**
+     * @return null|string
+     */
+    private function getResponseFailureMessage()
+    {
+        $serviceCode = $this->_response->ServiceCode;
+
+        switch ($serviceCode) {
+            case 'afterpaydigiaccept':
+            case 'afterpayacceptgiro':
+                $transactionType = $this->_response->TransactionType;
+                $failureMessage = null;
+
+                //Only specific Afterpay responses have a custom response message
+                if ($transactionType == 'C011' || $transactionType == 'C016') {
+                    $parsedResponse = $this->_parseResponse();
+                    $subcodeMessage = explode(':', $parsedResponse['subCode']['message']);
+
+                    if (count($subcodeMessage) > 1) {
+                        array_shift($subcodeMessage);
+                    }
+
+                    $failureMessage = trim(implode(':', $subcodeMessage));
+                }
+                break;
+            case 'klarna':
+                $failureMessage = $this->_response->ConsumerMessage->HtmlText;
+                break;
+            default:
+                $failureMessage = null;
+                break;
+        }
+
+        return $failureMessage;
     }
 
     /**

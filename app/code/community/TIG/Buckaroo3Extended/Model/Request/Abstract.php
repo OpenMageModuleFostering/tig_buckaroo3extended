@@ -201,7 +201,10 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
 
     protected function _addShopVariables()
     {
-        $returnUrl = Mage::getUrl('buckaroo3extended/notify/return', array('_secure' => true));
+        $returnUrl = Mage::getUrl('buckaroo3extended/notify/return', array(
+            '_secure' => true,
+            '_store' => $this->_order->getStoreId(),
+        ));
 
         $merchantKey = Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $this->_order->getStoreId());
         $description = Mage::getStoreConfig('buckaroo/buckaroo3extended/payment_description', $this->_order->getStoreId());
@@ -271,5 +274,63 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
         $this->_vars['invoiceId']              = 'CM'.$invoice->getIncrementId();
 
         $this->_debugEmail                    .= "Refund variables added! \n";
+    }
+
+    /**
+     * Add variables for Capture requests
+     */
+    protected function _addCaptureVariables()
+    {
+        $this->_vars['OriginalTransactionKey'] = $this->_order->getTransactionKey();
+
+        /** @var Mage_Sales_Model_Resource_Order_Invoice_Collection $invoiceCollection */
+        $invoiceCollection = $this->_order->getInvoiceCollection();
+
+        /** @var Mage_Sales_Model_Order_Invoice $lastInvoice */
+        $lastInvoice = $invoiceCollection->getLastItem();
+
+        if ($this->_currentCurrencyIsAllowed()) {
+            $partialAmount = $lastInvoice->getGrandTotal();
+        } else {
+            $partialAmount = $lastInvoice->getBaseGrandTotal();
+        }
+
+        if ($partialAmount < $this->_vars['amountDebit']) {
+            $this->_vars['amountDebit'] = $partialAmount;
+            $this->_vars['invoiceId']   = $this->_order->getIncrementId() . '-'
+                . count($invoiceCollection) . '-' . substr(md5(date("YMDHis")), 0, 6);
+        }
+
+        $this->_debugEmail .= "Capture variables added! \n";
+    }
+
+    /**
+     * Add variables for Cancel Authorize requests.
+     * AmountDebit and AmountCredit are swapped since this is not a pay request, but a cancel one.
+     */
+    protected function _addCancelAuthorizeVariables()
+    {
+        $currentCurrencyIsAllowed = $this->_currentCurrencyIsAllowed();
+        $amountDebit = $this->_order->getBaseGrandTotal();
+
+        if ($currentCurrencyIsAllowed) {
+            $amountDebit = $this->_order->getGrandTotal();
+        }
+
+        /** @var Mage_Sales_Model_Resource_Order_Invoice_Collection $invoiceCollection */
+        $invoiceCollection = $this->_order->getInvoiceCollection();
+
+        /** @var Mage_Sales_Model_Order_Invoice $invoice */
+        foreach ($invoiceCollection as $invoice) {
+            if ($currentCurrencyIsAllowed) {
+                $amountDebit -= $invoice->getGrandTotal();
+            } else {
+                $amountDebit -= $invoice->getBaseGrandTotal();
+            }
+        }
+
+        $this->_vars['OriginalTransactionKey'] = $this->_order->getTransactionKey();
+        $this->_vars['amountCredit'] = $amountDebit;
+        $this->_vars['amountDebit']  = 0;
     }
 }

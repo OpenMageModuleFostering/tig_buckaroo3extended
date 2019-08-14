@@ -335,75 +335,113 @@ class TIG_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Method_Abs
      */
     protected function _determineAmountAndCurrency()
     {
+        $currentCurrency = Mage::app()->getStore()->getCurrentCurrencyCode();
+
+        if ($this->_order->getOrderCurrencyCode() != $currentCurrency) {
+            $currentCurrency = $this->_order->getOrderCurrencyCode();
+        }
+
+        // currency is not available for this module
+        if ($this->_currentCurrencyIsAllowed()) {
+            $currency = $currentCurrency;
+            $totalAmount = $this->_order->getGrandTotal();
+        } else {
+            $totalAmount = $this->_order->getBaseGrandTotal();
+            $currency = $this->_order->getBaseCurrency()->getCode();
+        }
+
+        return array($currency, $totalAmount);
+    }
+
+    /**
+     * Check whether the current curreny of the order is allowed
+     *
+     * @return bool
+     */
+    protected function _currentCurrencyIsAllowed()
+    {
         $code = $this->_order->getPayment()->getMethod();
 
         // availability currency codes for this Payment Module
-        switch($code)
-        {
+        switch ($code) {
             case 'buckaroo3extended_ideal':
             case 'buckaroogiftcard':
             case 'buckaroo2012giftcard':
             case 'buckarooideal':
             case 'buckaroo':
-            case 'buckaroo2012ideal':                      $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_ideal_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_ideal/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012ideal':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_ideal_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_ideal/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_visa':
             case 'buckaroocc':
-            case 'buckaroo2012creditcard':                  $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_visa_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_visa/allowed_currencies', $this->getStoreId());
-                                                         break;
-            case 'buckaroo3extended_amex':               $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_amex_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_amex/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012creditcard':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_visa_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_visa/allowed_currencies', $this->getStoreId());
+                break;
+            case 'buckaroo3extended_amex':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_amex_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_amex/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_mastercard':
-            case 'mastercard':                               $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_mastercard_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_mastercard/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'mastercard':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_mastercard_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_mastercard/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_directdebit':
             case 'buckaroocollect':
-            case 'buckaroo2012machtiging':                  $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_directdebit_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_directdebit/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012machtiging':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_directdebit_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_directdebit/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_paypal':
             case 'buckaroopaypal':
-            case 'buckaroo2012paypal':                      $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paypal_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012paypal':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paypal_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paypal/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_transfer':
             case 'buckarootransfer':
-            case 'buckaroo2012overschrijving':             $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_transfer_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_transfer/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012overschrijving':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_transfer_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_transfer/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_paymentguarantee':
             case 'buckarootransfergarant':
-            case 'buckaroo2012betaalgarant':             $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paymentguarantee_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paymentguarantee/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012betaalgarant':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paymentguarantee_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paymentguarantee/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_giropay':
             case 'buckaroogiropay':
-            case 'buckaroo2012giropay':                     $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_giropay_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_giropay/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012giropay':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_giropay_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_giropay/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_paysafecard':
             case 'buckaroocashticket':
             case 'buckaroopaysafecard':
-            case 'buckaroo2012cashticketpaysafecard':     $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paysafecard_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paysafecard/allowed_currencies', $this->getStoreId());
-                                                         break;
+            case 'buckaroo2012cashticketpaysafecard':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_paysafecard_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_paysafecard/allowed_currencies', $this->getStoreId());
+                break;
             case 'buckaroo3extended_payperemail':
             case 'buckaroopayperemail':
-            case 'buckaroo2012payperemail':                 $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_payperemail_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_payperemail/allowed_currencies', $this->getStoreId());
-                                                         break;
-            case 'buckaroo3extended_sofortueberweisung': $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_sofortueberweisung_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_sofortueberweisung/allowed_currencies', $this->getStoreId());
-                                                         break;
-            case 'buckaroo3extended_maestro':            $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_maestro_paymentMethod');
-                                                         $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_maestro/allowed_currencies', $this->getStoreId());
-                                                         break;
-            default:                                     $paymentMethod = null;
-                                                         $currenciesAllowedConfig = 'EUR';
+            case 'buckaroo2012payperemail':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_payperemail_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_payperemail/allowed_currencies', $this->getStoreId());
+                break;
+            case 'buckaroo3extended_sofortueberweisung':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_sofortueberweisung_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_sofortueberweisung/allowed_currencies', $this->getStoreId());
+                break;
+            case 'buckaroo3extended_maestro':
+                $paymentMethod = Mage::getModel('buckaroo3extended/paymentMethods_maestro_paymentMethod');
+                $currenciesAllowedConfig = Mage::getStoreConfig('buckaroo/buckaroo3extended_maestro/allowed_currencies', $this->getStoreId());
+                break;
+            default:
+                $paymentMethod = null;
+                $currenciesAllowedConfig = 'EUR';
         }
 
         if (!is_null($paymentMethod)) {
@@ -420,18 +458,7 @@ class TIG_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Method_Abs
             $currentCurrency = $this->_order->getOrderCurrencyCode();
         }
 
-        // currency is not available for this module
-        if (in_array($currentCurrency, $currenciesAllowed)
-            && in_array($currentCurrency, $currenciesAllowedConfig))
-        {
-            $currency = $currentCurrency;
-            $totalAmount = $this->_order->getGrandTotal();
-        } else {
-            $totalAmount = $this->_order->getBaseGrandTotal();
-            $currency = $this->_order->getBaseCurrency()->getCode();
-        }
-
-        return array($currency, $totalAmount);
+        return (in_array($currentCurrency, $currenciesAllowed) && in_array($currentCurrency, $currenciesAllowedConfig));
     }
 
     /**

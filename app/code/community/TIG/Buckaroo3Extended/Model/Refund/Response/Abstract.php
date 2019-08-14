@@ -57,7 +57,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Response_Abstract extends TIG_Buckaroo3
     }
 
 
-    protected function _success()
+    protected function _success($status = self::BUCKAROO_SUCCESS)
     {
         $this->_debugEmail .= 'The refund request has been accepted \n';
 
@@ -66,7 +66,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Response_Abstract extends TIG_Buckaroo3
         return $this;
     }
 
-    protected function _rejected()
+    protected function _rejected($message = '')
     {
         $this->_debugEmail .= 'The refund request has been rejected \n';
 
@@ -79,7 +79,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Response_Abstract extends TIG_Buckaroo3
         return $this;
     }
 
-    protected function _failed()
+    protected function _failed($message = '')
     {
         $this->_debugEmail .= 'The transaction request has failed. \n';
 
@@ -90,7 +90,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Response_Abstract extends TIG_Buckaroo3
         Mage::throwException(Mage::helper('buckaroo3extended')->__($this->_response->Status->Code->_));
     }
 
-    protected function _error()
+    protected function _error($message = '')
     {
         $this->_debugEmail .= 'The transaction request produced an error. \n';
 

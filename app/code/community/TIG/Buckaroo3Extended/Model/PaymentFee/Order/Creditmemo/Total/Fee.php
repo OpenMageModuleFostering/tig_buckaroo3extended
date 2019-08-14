@@ -44,6 +44,22 @@ class TIG_Buckaroo3Extended_Model_PaymentFee_Order_Creditmemo_Total_Fee
      */
     const XPATH_BUCKAROO_FEE_INCLUDING_TAX = 'tax/calculation/buckaroo_fee_including_tax';
 
+    /** @var null|TIG_Buckaroo3Extended_Helper_Data */
+    protected $_helper = null;
+
+    /**
+     * @return TIG_Buckaroo3Extended_Helper_Data
+     */
+    protected function getHelper()
+    {
+        if ($this->_helper === null) {
+            $helper = Mage::helper('buckaroo3extended');
+            $this->_helper = $helper;
+        }
+
+        return $this->_helper;
+    }
+
     /**
      * Get the Buckaroo Payment fee total amount.
      *
@@ -59,6 +75,12 @@ class TIG_Buckaroo3Extended_Model_PaymentFee_Order_Creditmemo_Total_Fee
         $fee     = $creditmemo->getBuckarooFee();
         $baseFee = $creditmemo->getBaseBuckarooFee();
 
+        $creditmemoInvoice = $creditmemo->getInvoice();
+
+        if ($creditmemoInvoice && ($creditmemoInvoice->getBuckarooFee() < 0.01 || $creditmemoInvoice->getBaseBuckarooFee() < 0.01)) {
+            return $this;
+        }
+
         /**
          * If the creditmemo has a fee already, we only need to set the totals. This is the case for existing
          * creditmemos that are being viewed.
@@ -73,7 +95,7 @@ class TIG_Buckaroo3Extended_Model_PaymentFee_Order_Creditmemo_Total_Fee
          * If we are currently in the backend and logged in, we need to check the POST parameters to see if any fee
          * amount is to be refunded.
          */
-        if (Mage::helper('buckaroo3extended')->isAdmin() && Mage::getSingleton('admin/session')->isLoggedIn()) {
+        if ($this->getHelper()->isAdmin() && Mage::getSingleton('admin/session')->isLoggedIn()) {
             /**
              * This is unfortunately the only way to determine the fee amount that needs to be refunded without
              * rewriting a core class. If anybody knows of a better way, please let us know at
@@ -182,7 +204,7 @@ class TIG_Buckaroo3Extended_Model_PaymentFee_Order_Creditmemo_Total_Fee
 
         if (round($orderBaseFeeRefunded + $baseFee, 4) > $orderBaseFee) {
             throw new Mage_Exception(
-                Mage::helper('buckaroo3extended')->__(
+                $this->getHelper()->__(
                     'Maximum Buckaroo Payment fee amount available to refunds is %s.',
                     $order->formatPriceTxt(
                         $orderBaseFee - $orderBaseFeeRefunded

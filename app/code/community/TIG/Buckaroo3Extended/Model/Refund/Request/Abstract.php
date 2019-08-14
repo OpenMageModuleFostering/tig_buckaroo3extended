@@ -59,7 +59,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Request_Abstract extends TIG_Buckaroo3E
         $this->setOrder($data['payment']->getOrder());
         $this->setSession(Mage::getSingleton('core/session'));
 
-        $invoice = $this->loadInvoiceByTransactionId($this->_order->getTransactionKey());
+        $invoice = $this->loadInvoiceByTransactionId($this->_getTransactionId());
 
         if ($invoice === false) {
             Mage::throwException($this->_getHelper()->__('Refund action is not available.'));
@@ -88,6 +88,19 @@ class TIG_Buckaroo3Extended_Model_Refund_Request_Abstract extends TIG_Buckaroo3E
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    protected function _getTransactionId() {
+        if ($this->_payment->getParentTransactionId()) {
+            return $this->_payment->getParentTransactionId();
+        } elseif ($this->_payment->getLastTransId()) {
+            return $this->_payment->getLastTransId();
+        }
+
+        return $this->_order->getTransactionKey();
+    }
+
     protected function _sendRefundRequest()
     {
         $this->_debugEmail .= 'Chosen payment method: ' . $this->_method . "\n";
@@ -110,7 +123,7 @@ class TIG_Buckaroo3Extended_Model_Refund_Request_Abstract extends TIG_Buckaroo3E
         $this->_debugEmail .= "Firing request events. \n";
         //event that allows individual payment methods to add additional variables such as bankaccount number
         Mage::dispatchEvent('buckaroo3extended_refund_request_addservices', array('request' => $this, 'order' => $this->_order));
-        Mage::dispatchEvent('buckaroo3extended_refund_request_addcustomvars', array('request' => $this, 'order' => $this->_order));
+        Mage::dispatchEvent('buckaroo3extended_refund_request_addcustomvars', array('request' => $this, 'order' => $this->_order, 'payment' => $this->_payment));
 
         $this->_debugEmail .= "Events fired! \n";
 

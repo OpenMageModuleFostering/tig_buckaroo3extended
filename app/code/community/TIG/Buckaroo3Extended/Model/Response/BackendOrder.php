@@ -1,7 +1,7 @@
 <?php
 class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Extended_Model_Response_Abstract
 {
-    protected function _success()
+    protected function _success($status = self::BUCKAROO_SUCCESS)
     {
         $this->_debugEmail .= "The request was successful \n";
         if(!$this->_order->getEmailSent())
@@ -15,7 +15,7 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
         $this->sendDebugEmail();
     }
 
-    protected function _failed()
+    protected function _failed($message = '')
     {
         $this->_debugEmail .= 'The request failed \n';
         $this->restoreQuote();
@@ -28,7 +28,7 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
         Mage::throwException('An error occurred while processing the payment request, check the Buckaroo debug e-mail for details.');
     }
 
-    protected function _error()
+    protected function _error($message = '')
     {
         $this->_debugEmail .= "The request generated an error \n";
 
@@ -58,9 +58,9 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
         $this->_success();
     }
 
-    protected function _incorrectPayment()
+    protected function _incorrectPayment($message = '')
     {
-        $this->_error();
+        $this->_error($message);
     }
 
     protected function _verifyError()

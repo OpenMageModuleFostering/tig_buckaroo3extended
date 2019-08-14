@@ -146,7 +146,7 @@
 "WARNING: Paypal Seller Protection requires additional configuration. Please read the documentation before proceding.","WARNING: Paypal Seller Protection requires additional configuration. Please read the documentation before proceding."
 "EPS","EPS"
 "Send order confirmation email","Send order confirmation email"
-"Enable to send an order confirmation email to the customer when the payment is succesfull. Specific for this payment method.","Enable to send an order confirmation email to the customer when the payment is succesfull. Specific for this payment method."
+"Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet).","Activate to send an order confirmation e-mail when the order has been successfully placed. Specific for this payment method. This does not automatically mean that the payment has been made (yet)."
 "Status Success received for order %s while the order currently the status %s has.","Status Success received for order %s while the order currently the status %s has."
 "here","here"
 "Convert your account number to IBAN %s","Convert your account number to IBAN %s."

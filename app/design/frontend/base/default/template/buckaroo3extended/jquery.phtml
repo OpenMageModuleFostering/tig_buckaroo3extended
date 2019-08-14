@@ -1,5 +1,7 @@
 <script>
-    jQuery.noConflict();
+    if(jQuery) {
+        jQuery.noConflict();
+    }
 </script>
 <![if !lt IE 9]>
 <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/TIG/Buckaroo3Extended/jquery-1.12.3.min.js', array('_secure' => true)); ?>"></script>

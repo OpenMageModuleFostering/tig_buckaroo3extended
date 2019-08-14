@@ -164,6 +164,31 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws Zend_Currency_Exception
+     */
+    public function processPartialTransferMessage()
+    {
+        $response = $this->_parsePostResponse($this->_postArray['brq_statuscode']);
+
+        $description = Mage::helper('buckaroo3extended')->__($response['message']);
+        $description .= " (#{$this->_postArray['brq_statuscode']})<br>";
+
+        if ($this->_postArray['brq_currency'] == $this->_order->getBaseCurrencyCode()) {
+            $currencyCode = $this->_order->getBaseCurrencyCode();
+        } else {
+            $currencyCode = $this->_order->getOrderCurrencyCode();
+        }
+        $brqAmount = Mage::app()->getLocale()->currency($currencyCode)->toCurrency($this->_postArray['brq_amount']);
+
+        $description .= 'Partial amount of ' . $brqAmount . ' has been paid';
+
+        $this->_order->addStatusHistoryComment($description)->save();
+
+        return true;
+    }
+
 
     /**
      * Checks if the post received is valid by checking its signature field.
@@ -320,8 +345,22 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         $this->_autoInvoice();
 
         $description = Mage::helper('buckaroo3extended')->__($description);
+        $description .= " (#{$this->_postArray['brq_statuscode']})<br>";
 
-        $description .= " (#{$this->_postArray['brq_statuscode']})";
+        $paymentMethod = $this->_order->getPayment()->getMethodInstance();
+
+        if ($this->_postArray['brq_currency'] == $this->_order->getBaseCurrencyCode()) {
+            $currencyCode = $this->_order->getBaseCurrencyCode();
+        } else {
+            $currencyCode = $this->_order->getOrderCurrencyCode();
+        }
+        $brqAmount = Mage::app()->getLocale()->currency($currencyCode)->toCurrency($this->_postArray['brq_amount']);
+
+        if ($paymentMethod->getConfigPaymentAction() != Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
+            $description .= 'Total amount of ' . $brqAmount . ' has been paid';
+        } else {
+            $description .= 'Total amount of ' . $brqAmount . ' has been authorized. Please create an invoice to capture the authorized amount.';
+        }
 
         //sets the transaction key if its defined ($trx)
         //will retrieve it from the response array, if response actually is an array
@@ -521,6 +560,12 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
             return false;
         }
 
+        //Check if the method has to be authorized first before an invoice can be made
+        $paymentMethod = $this->_order->getPayment()->getMethodInstance();
+        if ($paymentMethod->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE) {
+            return false;
+        }
+
         //returns true if invoice has been made, else false
         $invoiceSaved = $this->_saveInvoice();
 
@@ -586,7 +631,7 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
 
         //sort the array
         $sortableArray = $this->buckarooSort($origArray);
-        
+
         //check if encoding is used for the received postData
         $doUrlDecode = $this->_checkDoubleEncoding($sortableArray['brq_timestamp']);
         $this->_debugEmail .= "URL Encoding = " . var_export($doUrlDecode, true) . "\n";
@@ -598,7 +643,7 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
                 && 'brq_SERVICE_masterpass_ShippingRecipientPhoneNumber' !== $key
             ) {
                 if ($doUrlDecode) {
-                    $value = urldecode($value);    
+                    $value = urldecode($value);
                 }
             }
             $signatureString .= $key . '=' . $value;
@@ -628,7 +673,7 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         $hasDoubleEncoding = false;
         if (strpos($postFieldTimestamp, '+') !== false) {
             $hasDoubleEncoding = true;
-        } 
+        }
 
         return $hasDoubleEncoding;
     }
@@ -676,37 +721,6 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
      */
     protected function _checkCorrectAmount()
     {
-        /**
-         * TEMPORARY DIRTY FIX -- REMOVE BEFORE RELEASE
-         * @todo remove this code
-         */
         return true;
-
-        $amountPaid = $this->_postArray['brq_amount'];
-
-        $this->_debugEmail .= 'Currency used is '
-            . $this->_postArray['brq_currency']
-            . '. Order currency is '
-            . $this->_order->getOrderCurrencyCode()
-            . ".\n";
-
-        if ($this->_postArray['brq_currency'] == $this->_order->getOrderCurrencyCode()) {
-            $this->_debugEmail .= "Currency used is same as order currency \n";
-            $amountOrdered = $this->_order->getGrandTotal();
-        } else {
-            $this->_debugEmail .= "Currency used is different from order currency \n";
-            $amountOrdered = $this->_order->getBaseGrandTotal();
-        }
-
-        $this->_debugEmail .= "Amount paid: {$amountPaid}. Amount ordered: {$amountOrdered} \n";
-
-        if (($amountPaid - $amountOrdered) > 0.01 || ($amountPaid - $amountOrdered) < -0.01) {
-            return array(
-                'message' => 'Incorrect amount transfered',
-                'status'  => self::BUCKAROO_INCORRECT_PAYMENT,
-            );
-        } else {
-            return true;
-        }
     }
 }

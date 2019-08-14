@@ -20,6 +20,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Transfer_PaymentMethod extends 
 
     protected $_canRefund               = false;
     protected $_canRefundInvoicePartial = false;
+    protected $_orderMailStatusses      = array( TIG_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_SUCCESS, TIG_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_PENDING_PAYMENT);
 
     public function getOrderPlaceRedirectUrl()
     {

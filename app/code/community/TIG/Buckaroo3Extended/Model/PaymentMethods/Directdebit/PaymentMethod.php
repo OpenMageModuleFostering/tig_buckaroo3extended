@@ -10,6 +10,10 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Directdebit_PaymentMethod exten
     protected $_formBlockType = 'buckaroo3extended/paymentMethods_directdebit_checkout_form';
     protected $_infoBlockType = 'buckaroo3extended/paymentMethods_directdebit_info';
 
+    protected $_orderMailStatusses      = array( TIG_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_SUCCESS,
+                                                 TIG_Buckaroo3Extended_Model_Response_Abstract::BUCKAROO_PENDING_PAYMENT);
+
+
     public function getOrderPlaceRedirectUrl()
     {
         $session = Mage::getSingleton('checkout/session');

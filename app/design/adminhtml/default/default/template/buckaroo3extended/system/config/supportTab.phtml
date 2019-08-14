@@ -1,14 +1,29 @@
-<?php $_helper = $this->helper('buckaroo3extended'); ?>
+<?php
+/** @var TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_SupportTab $this */
+
+$_helper   = $this->helper('buckaroo3extended');
+$version   = $this->getVersion();
+$stability = $this->getStability();
+?>
 <tr>
     <td>
-        <h2 class="content-heading"><?php echo $_helper->__('BPE 3.0 version');?> <?php echo Mage::getConfig()->getModuleConfig("TIG_Buckaroo3Extended")->version;?></h2>
+        <h2 class="content-heading">
+            <?php
+            echo $_helper->__('BPE 3.0 version') . ' ';
+            echo $version;
+
+            if ($stability !== null) {
+                echo ' - ' . $stability;
+            }
+            ?>
+        </h2>
         <table id="supportWrap" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="col-left">
                     <div class="text-box">
                         <h3><?php echo $_helper->__('Quick reference guide');?></h3>
                         <ol>
-                            <li><strong><?php echo $_helper->__('Log in to the ');?> <a target="_blank" href="https://payment.buckaroo.nl/"><?php echo $_helper->__('Buckaroo Payment Plaza');?></a> <?php echo $_helper->__(' to collect the following security settings:');?></strong>
+                            <li><strong><?php echo $_helper->__('Log in to the ');?> <a target="_blank" href="https://plaza.buckaroo.nl/"><?php echo $_helper->__('Buckaroo Payment Plaza');?></a> <?php echo $_helper->__(' to collect the following security settings:');?></strong>
                                 <ol>
                                     <li><?php echo $_helper->__('(Merchant) Key - Profile &rarr; Websites &rarr; Key.');?></li>
                                     <li><?php echo $_helper->__('Secret Key - Configuration &rarr; Secret key for Digitale signature &rarr; Secret Key.');?></li>
@@ -67,7 +82,7 @@
                             <li><?php echo $_helper->__('Magento Enterprise Edition version');?> 1.12, 1.13 &amp; 1.14</li>
                         </ul>
                         <ul>
-                            <li><?php echo $_helper->__('OneStepCheckout version');?> 4.0.7 - 4.5.5</li>
+                            <li><?php echo $_helper->__('OneStepCheckout version');?>4.0.7, 4.1, 4.2 & 4.5.5</li>
                         </ul>
                     </div>
                     <div class="text-box">
@@ -78,7 +93,7 @@
                         <table class="contact">
                              <tr>
                                 <td class="first"><?php echo $_helper->__('Buckaroo Payment Plaza:');?></td>
-                                <td class="last"><a target="_blank" href="https://payment.buckaroo.nl/">payment.buckaroo.nl</a></td>
+                                <td class="last"><a target="_blank" href="https://plaza.buckaroo.nl/">plaza.buckaroo.nl</a></td>
                                 <td class="buckaroo_logo" rowspan="3"><a href="http://www.buckaroo.nl" target="_blank"><img src="<?php echo $this->getSkinUrl('images/tig_buckaroo3extended/'); ?>buckaroo_small.png" alt="" /></a></td>
                             </tr>
                             <tr>

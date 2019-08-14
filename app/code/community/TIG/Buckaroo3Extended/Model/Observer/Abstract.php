@@ -104,6 +104,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
                 'AmountVat'        => $VAT,
                 'CustomerType'     => 1,
                 'MaxReminderLevel' => $reminderLevel,
+                'PaymentMethodsAllowed' => $this->_getPaymentMethodsAllowed(),
         );
 
         if (array_key_exists('customVars', $vars) && is_array($vars['customVars']['creditmanagement'])) {
@@ -165,7 +166,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         $state                  = $this->_billingInfo['state'];
         $fax                    = $this->_billingInfo['fax'];
         $country                = $this->_billingInfo['countryCode'];
-        $processedPhoneNumber   = $this->_processPhoneNumberCM();
+        $processedPhoneNumber   = ($country == 'BE' ? $this->_processPhoneNumberCMBe() : $this->_processPhoneNumberCM());
         $customerLastNamePrefix = $this->_getCustomerLastNamePrefix();
         $customerInitials       = $this->_getInitialsCM();
 
@@ -259,26 +260,49 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         //get address from billingInfo
         $address = $this->_billingInfo['address'];
 
-        $ret = array();
-        $ret['house_number'] = '';
-        $ret['number_addition'] = '';
-        if (preg_match('#^(.*?)([0-9]+)(.*)#s', $address, $matches)) {
-            if ('' == $matches[1]) {
-                // Number at beginning
-                $ret['house_number'] = trim($matches[2]);
-                $ret['street']         = trim($matches[3]);
-            } else {
-                // Number at end
-                $ret['street']            = trim($matches[1]);
-                 $ret['house_number']    = trim($matches[2]);
-                 $ret['number_addition'] = trim($matches[3]);
-            }
-        } else {
-             // No number
-             $ret['street'] = $address;
+        $addressRegexResult = preg_match('#\A(.*?)\s+(\d+[a-zA-Z]{0,1}\s{0,1}[-]{1}\s{0,1}\d*[a-zA-Z]{0,1}|\d+[a-zA-Z-]{0,1}\d*[a-zA-Z]{0,1})#', $address, $matches);
+        if (!$addressRegexResult || !is_array($matches)) {
+            $addressData = array(
+                'street'           => $address,
+                'house_number'          => '',
+                'number_addition' => '',
+            );
+
+            return $addressData;
         }
 
-         return $ret;
+        $streetname = '';
+        $housenumber = '';
+        $housenumberExtension = '';
+        if (isset($matches[1])) {
+            $streetname = $matches[1];
+        }
+
+        if (isset($matches[2])) {
+            $housenumber = $matches[2];
+        }
+
+        if (!empty($housenumber)) {
+            $housenumber = trim($housenumber);
+            $housenumberRegexResult = preg_match('#^([\d]+)(.*)#s', $housenumber, $matches);
+            if ($housenumberRegexResult && is_array($matches)) {
+                if (isset($matches[1])) {
+                    $housenumber = $matches[1];
+                }
+
+                if (isset($matches[2])) {
+                    $housenumberExtension = trim($matches[2]);
+                }
+            }
+        }
+
+        $addressData = array(
+            'street'           => $streetname,
+            'house_number'          => $housenumber,
+            'number_addition' => $housenumberExtension,
+        );
+
+        return $addressData;
     }
 
     /**
@@ -348,6 +372,75 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
     }
 
     /**
+     * processes the customer's BE phone number so as to fit the betaalgarant SOAP request
+     *
+     * @return array
+     */
+    protected function _processPhoneNumberCMBe()
+    {
+        $additionalFields = Mage::getSingleton('checkout/session')->getData('additionalFields');
+        if (isset($additionalFields['BPE_PhoneNumber'])) {
+            $number = $additionalFields['BPE_PhoneNumber'];
+        } else {
+            $number = ($this->_billingInfo['telephone'])?:'012345678';
+        }
+
+
+        //the final output must like this: 003212345678 for mobile: 0032461234567
+        //so 13 characters max else number is not valid
+        //but for some error correction we try to find if there is some faulty notation
+
+        $return = array("orginal" => $number, "clean" => false, "mobile" => false, "valid" => false);
+        //first strip out the non-numeric characters:
+        $match = preg_replace('/[^0-9]/Uis', '', $number);
+        if ($match) {
+            $number = $match;
+        }
+
+        $return['mobile'] = $this->_isMobileNumberBe($number);
+        $numberLength = strlen((string)$number);
+
+        if (($return['mobile'] && $numberLength == 13) || (!$return['mobile'] && $numberLength == 12)) {
+            //if the length equal to 12 or 13 is, then we can check if the number is valid
+            $return['valid'] = true;
+            $return['clean'] = $number;
+        } elseif ($numberLength > 13 || (!$return['mobile'] && $numberLength > 12)) {
+            //if the number is bigger then 13, it means that there are probably a zero to much
+            $return['clean'] = $this->_isValidNotationBe($number);
+            $cleanLength = strlen((string)$return['clean']);
+
+            if (($return['mobile'] && $cleanLength == 13) || (!$return['mobile'] && $cleanLength == 12)) {
+                $return['valid'] = true;
+            }
+        } elseif (($return['mobile'] && ($numberLength == 11 || $numberLength == 12))
+            || (!$return['mobile'] && ($numberLength == 10 || $numberLength == 11))
+        ) {
+            //if the number is equal to 10, 11 or 12, it means that they used a + in their number instead of 00
+            $return['clean'] = $this->_isValidNotationBe($number);
+            $cleanLength = strlen((string)$return['clean']);
+
+            if (($return['mobile'] && $cleanLength == 13) || (!$return['mobile'] && $cleanLength == 12)) {
+                $return['valid'] = true;
+            }
+        } elseif (($return['mobile'] && $numberLength == 10) || (!$return['mobile'] && $numberLength == 9)) {
+            //this means that the user has no trailing "0032" and therfore only
+            $return['clean'] = '0032'.substr($number, 1);
+            $cleanLength = strlen((string)$return['clean']);
+
+            if (($return['mobile'] && $cleanLength == 13) || (!$return['mobile'] && $cleanLength == 12)) {
+                $return['valid'] = true;
+            }
+        } else {
+            $return['mobile'] = $this->_isMobileNumberBe($number);
+            //now we can almost say that the number is valid
+            $return['valid'] = true;
+            $return['clean'] = $number;
+        }
+
+        return $return;
+    }
+
+    /**
      * validate the phonenumber
      *
      * @param $number
@@ -375,6 +468,35 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
     }
 
     /**
+     * validate the BE phonenumber
+     *
+     * @param $number
+     * @return mixed
+     */
+    protected function _isValidNotationBe($number) {
+        //checks if the number is valid, if not: try to fix it
+        $invalidNotations = array("00320", "0320", "320", "32");
+
+        foreach ($invalidNotations as $invalid) {
+            if (strpos(substr($number, 0, strlen($invalid)), $invalid) !== false) {
+                $valid = substr($invalid, 0, -1);
+                if (substr($valid, 0, 2) == '32') {
+                    $valid = "00" . $valid;
+                }
+                if (substr($valid, 0, 2) == '03') {
+                    $valid = "0" . $valid;
+                }
+                if ($valid == '3') {
+                    $valid = "0" . $valid . "2";
+                }
+                $number = substr_replace($number, $valid, 0, strlen($invalid));
+            }
+        }
+
+        return $number;
+    }
+
+    /**
      * Checks if the number is a mobile number or not.
      *
      * @param string $number
@@ -391,6 +513,31 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Checks if the number is a BE mobile number or not.
+     *
+     * @param string $number
+     *
+     * @return boolean
+     */
+    protected function _isMobileNumberBe($number) {
+        //this function only checks if it is a BE mobile number, not checking valid notation
+        $checkMobileArray = array(
+            "3246","32046","046","003246","0032046",
+            "3247","32407","047","003247","0032047",
+            "3248","32048","048","003248","0032048",
+            "3249","32049","049","003249","0032049"
+        );
+
+        foreach ($checkMobileArray as $key => $value) {
+            if (strpos(substr($number, 0, strlen($value)), $value) !== false) {
+                return true;
+            }
+        }
+
         return false;
     }
 

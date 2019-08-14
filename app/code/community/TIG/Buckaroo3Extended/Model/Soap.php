@@ -131,12 +131,13 @@ final class TIG_Buckaroo3Extended_Model_Soap extends TIG_Buckaroo3Extended_Model
         /*when request is a refund; use 'CallCenter' else use channel 'Web' (case sensitive)*/
         $requestChannel = 'Web';
         $invoiceNumber = $this->_vars['orderId'];
-        if(round($this->_vars['amountDebit'], 2) == 0
-            && round($this->_vars['amountCredit'], 2) > 0){
-            $requestChannel = 'CallCenter';
 
+        if (isset($this->_vars['invoiceId'])) {
             $invoiceNumber = $this->_vars['invoiceId'];
 
+            if (round($this->_vars['amountDebit'], 2) == 0 && round($this->_vars['amountCredit'], 2) > 0) {
+                $requestChannel = 'CallCenter';
+            }
         }
 
         $client->thumbprint = $this->_vars['thumbprint'];

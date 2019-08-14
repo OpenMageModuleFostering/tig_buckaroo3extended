@@ -49,7 +49,11 @@
 
     <?php $currentBusiness = $this->getBusiness(); ?>
 
-    <?php $currentBusiness = ($this->getPaymethod() == 'afterpaydigiaccept')? $currentBusiness : '1'; ?>
+    <?php
+    if ($this->getPaymethod() != 'afterpaydigiaccept' || $this->getBillingCountry() == 'BE') {
+        $currentBusiness = '1';
+    }
+    ?>
 
     <?php if($currentBusiness == '1'): ?>
 
@@ -69,14 +73,6 @@
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyName"><?php echo $this->__('Company Name');?></label>
                 <div class="input-box">
                     <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->escapeHtml($this->getCompanyName());?>" />
-                </div>
-                <label class="required" for="<?php echo $_code;?>_BPE_CostCentre"><?php echo $this->__('Cost Center');?></label>
-                <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->escapeHtml($this->getCostCentre());?>" />
-                </div>
-                <label class="required" for="<?php echo $_code;?>_BPE_VatNumber"><?php echo $this->__('VAT Number');?></label>
-                <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->escapeHtml($this->getVatNumber());?>" />
                 </div>
             </div>
         </li>
@@ -105,14 +101,6 @@
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyName"><?php echo $this->__('Company Name');?></label>
                 <div class="input-box">
                     <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->escapeHtml($this->getCompanyName());?>" />
-                </div>
-                <label class="required" for="<?php echo $_code;?>_BPE_CostCentre"><?php echo $this->__('Cost Center');?></label>
-                <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->escapeHtml($this->getCostCentre());?>" />
-                </div>
-                <label class="required" for="<?php echo $_code;?>_BPE_VatNumber"><?php echo $this->__('VAT Number');?></label>
-                <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->escapeHtml($this->getVatNumber());?>" />
                 </div>
             </div>
         </li>

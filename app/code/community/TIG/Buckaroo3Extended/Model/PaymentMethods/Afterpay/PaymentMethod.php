@@ -30,15 +30,56 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
 
     protected $_formBlockType = 'buckaroo3extended/paymentMethods_afterpay_checkout_form';
 
+    protected $_canOrder                = true;
     protected $_canRefund               = true;
-    protected $_canRefundInvoicePartial = false;
+    protected $_canRefundInvoicePartial = true;
 
-    public function getOrderPlaceRedirectUrl()
+    /**
+     * {@inheritdoc}
+     */
+    public function canCapture()
     {
-        $session = Mage::getSingleton('checkout/session');
+        if ($this->getConfigPaymentAction() == Mage_Payment_Model_Method_Abstract::ACTION_ORDER) {
+            return false;
+        }
 
-        $post = Mage::app()->getRequest()->getPost();
+        return $this->_canCapture;
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function capture(Varien_Object $payment, $amount)
+    {
+        if (!$this->canCapture()) {
+            Mage::throwException(Mage::helper('payment')->__('Capture action is not available.'));
+        }
+
+        /** @var TIG_Buckaroo3Extended_Model_Request_Capture $captureRequest */
+        $captureRequest = Mage::getModel(
+            'buckaroo3extended/request_capture',
+            array(
+                'payment' => $payment
+            )
+        );
+
+        try {
+            $captureRequest->sendRequest();
+        } catch (Exception $e) {
+            Mage::helper('buckaroo3extended')->logException($e);
+            Mage::throwException($e->getMessage());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $post
+     *
+     * @return array
+     */
+    protected function _getBPEPostData($post)
+    {
         $accountNumber = isset($post[$this->_code . '_bpe_customer_account_number']) ? $post[$this->_code . '_bpe_customer_account_number'] : '';
 
         $customerBirthDate = date(
@@ -60,12 +101,21 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
             $additionalArray = array(
                 'BPE_CompanyCOCRegistration' => $post[$this->_code . '_BPE_CompanyCOCRegistration'],
                 'BPE_CompanyName'            => $post[$this->_code . '_BPE_CompanyName'],
-                'BPE_CostCentre'             => $post[$this->_code . '_BPE_CostCentre'],
-                'BPE_VatNumber'              => $post[$this->_code . '_BPE_VatNumber'],
             );
 
             $array = array_merge($array,$additionalArray);
         }
+
+        return $array;
+    }
+
+    public function getOrderPlaceRedirectUrl()
+    {
+        $session = Mage::getSingleton('checkout/session');
+
+        $post = Mage::app()->getRequest()->getPost();
+
+        $array = $this->_getBPEPostData($post);
 
         $session->setData('additionalFields',$array);
 
@@ -85,6 +135,12 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
         }
 
         $this->getInfoInstance()->setAdditionalInformation('checked_terms_and_conditions', true);
+
+        $BPEArray = $this->_getBPEPostData($postData);
+
+        foreach ($BPEArray as $key => $value) {
+            $this->getInfoInstance()->setAdditionalInformation($key, $value);
+        }
 
         return parent::validate();
     }
@@ -189,6 +245,17 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_PaymentMethod extends 
 
         // Currency is not available for this module
         if (!in_array($currency, $this->allowedCurrencies)) {
+            return false;
+        }
+
+        //Afterpay B2B cannot be used when ordering with a BE address
+        $paymethod = Mage::getStoreConfig('buckaroo/' . $this->_code . '/paymethod', $storeId);
+        $business = Mage::getStoreConfig('buckaroo/' . $this->_code . '/business', $storeId);
+        if ($quote
+            && $paymethod == 'afterpaydigiaccept'
+            && $business == '2'
+            && $quote->getBillingAddress()->getCountry() == 'BE'
+        ) {
             return false;
         }
 

@@ -1,9 +1,9 @@
-<?php 
-class TIG_Buckaroo3Extended_Block_PaymentMethods_Empayment_Adminhtml_System_Config_Advancedbtn 
+<?php
+class TIG_Buckaroo3Extended_Block_PaymentMethods_Empayment_Adminhtml_System_Config_Advancedbtn
     extends Mage_Adminhtml_Block_Abstract
-	implements Varien_Data_Form_Element_Renderer_Interface
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
-	protected $_template = 'buckaroo3extended/empayment_system/config/advancedbtn.phtml';
+    protected $_template = 'buckaroo3extended/empayment_system/config/advancedbtn.phtml';
 
     /**
      * Render fieldset html
@@ -13,7 +13,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Empayment_Adminhtml_System_Conf
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        
+
         return $this->toHtml();
     }
 }

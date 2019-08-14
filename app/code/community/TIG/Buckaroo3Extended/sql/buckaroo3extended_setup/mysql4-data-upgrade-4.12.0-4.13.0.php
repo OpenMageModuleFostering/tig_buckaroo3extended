@@ -31,33 +31,43 @@
  *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future. If you wish to customize this module for your
- * needs please contact servicedesk@tig.nl for more information.
+ * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2014 Total Internet Group B.V. (http://www.tig.nl)
+ * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-class TIG_Buckaroo3Extended_Model_Sources_FeePercentageMode
-{
-    /**
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        $helper = Mage::helper('buckaroo3extended');
-        $array = array(
-             array(
-                 'value' => 'subtotal',
-                 'label' => $helper->__('Subtotal')
-             ),
-             array(
-                 'value' => 'subtotal_incl_tax',
-                 'label' => $helper->__('Subtotal incl. tax')
-             ),
-             array(
-                 'value' => 'grandtotal',
-                 'label' => $helper->__('Grand total')
-             ),
-        );
-        return $array;
+$installer = $this;
+
+$installer->startSetup();
+
+$statusArray = array(
+    array(
+        'status' => 'buckaroo_pending_payment',
+        'label' => 'Buckaroo (waiting for payment)',
+        'is_new' => 1,
+        'form_key' => '',
+        'store_labels' => array(),
+        'state' => 'new'
+    ),
+    array(
+        'status' => 'buckaroo_incorrect_payment',
+        'label' => 'Buckaroo On Hold (incorrect amount transfered)',
+        'is_new' => 1,
+        'form_key' => '',
+        'store_labels' => array(),
+        'state' => 'holded'
+    )
+);
+
+foreach ($statusArray as $data) {
+    // Get the entity from the database
+    $statusDb = Mage::getModel('sales/order_status')->load($data['status']);
+
+    // Check if it already has a status - if it doesn't, we're going to add it
+    if (!$statusDb->getStatus()) {
+        $statusDb->setData($data);
+        $statusDb->save();
     }
 }
+
+$installer->endSetup();

@@ -377,10 +377,10 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer extends TIG_B
             if ('' == $matches[1]) {
                 // Number at beginning
                 $ret['house_number'] = trim($matches[2]);
-                $ret['street']		 = trim($matches[3]);
+                $ret['street']         = trim($matches[3]);
             } else {
                 // Number at end
-                $ret['street']			= trim($matches[1]);
+                $ret['street']            = trim($matches[1]);
                 $ret['house_number']    = trim($matches[2]);
                 $ret['number_addition'] = trim($matches[3]);
             }

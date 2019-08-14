@@ -189,9 +189,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Paymentguarantee_Observer exten
         switch ($response['status'])
         {
             case self::BUCKAROO_ERROR:
-            case self::BUCKAROO_FAILED:		       $updatedFailed = $pushModel->processFailed($newStates, $response['message']);
+            case self::BUCKAROO_FAILED:               $updatedFailed = $pushModel->processFailed($newStates, $response['message']);
                 break;
-            case self::BUCKAROO_SUCCESS:	       $updatedSuccess = $pushModel->processSuccess($newStates, $response['message']);
+            case self::BUCKAROO_SUCCESS:           $updatedSuccess = $pushModel->processSuccess($newStates, $response['message']);
                 break;
             case self::BUCKAROO_NEUTRAL:           $responseModel->_addNote($response['message']);
                 break;

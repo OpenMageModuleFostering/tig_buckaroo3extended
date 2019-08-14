@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Cartebancaire_Checkout_Form ext
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/cartebancaire/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/cartebancaire/checkout/form.phtml');
         parent::_construct();
     }
 }

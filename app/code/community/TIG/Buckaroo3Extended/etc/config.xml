@@ -2,7 +2,7 @@
 <config>
     <modules>
         <TIG_Buckaroo3Extended>
-            <version>4.12.0</version>
+            <version>4.13.0</version>
         </TIG_Buckaroo3Extended>
     </modules>
     <frontend>
@@ -1830,6 +1830,16 @@
                 <order_email>1</order_email>
             </buckaroo3extended_masterpass>
         </buckaroo>
-
+        <tax>
+            <calculation>
+                <buckaroo_fee_including_tax>1</buckaroo_fee_including_tax>
+            </calculation>
+            <sales_display>
+                <buckaroo_fee>3</buckaroo_fee>
+            </sales_display>
+            <cart_display>
+                <buckaroo_fee>2</buckaroo_fee>
+            </cart_display>
+        </tax>
     </default>
 </config>

@@ -10,5 +10,5 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Bancontactmrcash_PaymentMethod
 
     protected $_formBlockType = 'buckaroo3extended/paymentMethods_bancontactmrcash_checkout_form';
 
-    protected $_canRefundInvoicePartial = false;
+    protected $_canRefundInvoicePartial = true;
 }

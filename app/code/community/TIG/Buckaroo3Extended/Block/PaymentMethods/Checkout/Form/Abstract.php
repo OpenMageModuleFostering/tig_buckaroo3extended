@@ -32,8 +32,6 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Checkout_Form_Abstract extends 
 
         $code = $this->getMethod()->getCode();
 
-
-
         $quote = $this->getQuote();
         /** @todo generate the fee amount dynamic, based on TAX-settings  */
         //$paymentFeeModel = Mage::getModel('buckaroo3extended/paymentFee_quote_address_total_fee');
@@ -43,28 +41,21 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Checkout_Form_Abstract extends 
             $quote->getStoreId()
         );
 
-        if($paymentFee < 1){
+        $fee = str_replace(',', '.', $paymentFee);
+
+        // Check if the fee given rounds to 0.01+, if not, return nothing
+        if (number_format($fee, 2, '.', ',') == 0.00) {
             return '';
         }
-
-        $fee = str_replace(',', '.', $paymentFee);
 
         if (strpos($fee, '%') === false) {
             $fee = Mage::helper('core')->currency($fee, true, false);
         }
 
-        $feeText      = '';
+        $feeText = '(+ ' . $fee . ')';
 
         if ($useSpan) {
-            $feeText .= '<span class="buckaroo_fee '
-                      . $code
-                      . '">';
-        }
-
-        $feeText     .= '(+ ' . $fee . ')';
-
-        if ($useSpan) {
-            $feeText .= '</span>';
+            $feeText =  '<span class="buckaroo_fee ' . $code . '">' . $feeText . '</span>';
         }
 
         return $feeText;
@@ -130,8 +121,8 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Checkout_Form_Abstract extends 
     {
         $gender = (int) $this->getSession()->getData($this->getMethodCode() . '_BPE_Customergender');
         if (!$gender) {
-        	$customerId = $this->getAddress()->getCustomerId();
-			$customer = Mage::getModel('customer/customer')->load($customerId);
+            $customerId = $this->getAddress()->getCustomerId();
+            $customer = Mage::getModel('customer/customer')->load($customerId);
             $gender = (int) $customer->getGender();
         }
 

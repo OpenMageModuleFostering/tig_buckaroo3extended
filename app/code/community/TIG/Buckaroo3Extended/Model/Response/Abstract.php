@@ -7,24 +7,24 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
     protected $_customResponseProcessing = false;
 
-	public function setCurrentOrder($order)
+    public function setCurrentOrder($order)
     {
-    	$this->_order = $order;
+        $this->_order = $order;
     }
 
     public function getCurrentOrder()
     {
-    	return $this->_order;
+        return $this->_order;
     }
 
     public function setDebugEmail($debugEmail)
     {
-    	$this->_debugEmail = $debugEmail;
+        $this->_debugEmail = $debugEmail;
     }
 
     public function getDebugEmail()
     {
-    	return $this->_debugEmail;
+        return $this->_debugEmail;
     }
 
     public function setResponseXML($xml)
@@ -81,28 +81,28 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $this->_debugEmail .= "Verified as authentic! \n\n";
 
         if (!$this->_order->getTransactionKey()
-		    && is_object($this->_response)
-		    && isset($this->_response->Key))
-		{
-			$this->_order->setTransactionKey($this->_response->Key);
-			$this->_order->save();
+            && is_object($this->_response)
+            && isset($this->_response->Key))
+        {
+            $this->_order->setTransactionKey($this->_response->Key);
+            $this->_order->save();
             $this->_debugEmail .= 'Transaction key saved: ' . $this->_response->Key . "\n";
-		}
+        }
 
-		//sets the currency used by Buckaroo
-		if (!$this->_order->getCurrencyCodeUsedForTransaction()
-		    && is_object($this->_response)
-		    && isset($this->_response->Currency))
-		{
-		    $this->_order->setCurrencyCodeUsedForTransaction($this->_response->Currency);
-		    $this->_order->save();
-		}
+        //sets the currency used by Buckaroo
+        if (!$this->_order->getCurrencyCodeUsedForTransaction()
+            && is_object($this->_response)
+            && isset($this->_response->Currency))
+        {
+            $this->_order->setCurrencyCodeUsedForTransaction($this->_response->Currency);
+            $this->_order->save();
+        }
 
-		if (is_object($this->_response) && isset($this->_response->RequiredAction)) {
-		    $requiredAction = $this->_response->RequiredAction->Type;
-		} else {
-		    $requiredAction = false;
-		}
+        if (is_object($this->_response) && isset($this->_response->RequiredAction)) {
+            $requiredAction = $this->_response->RequiredAction->Type;
+        } else {
+            $requiredAction = false;
+        }
 
         $parsedResponse = $this->_parseResponse();
         $this->_addSubCodeComment($parsedResponse);
@@ -119,9 +119,9 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $this->_debugEmail .= "Dispatching custom order processing event... \n";
         Mage::dispatchEvent(
-        	'buckaroo3extended_response_custom_processing',
+            'buckaroo3extended_response_custom_processing',
             array(
-        		'model'          => $this,
+                'model'          => $this,
                 'order'          => $this->getOrder(),
                 'response'       => $parsedResponse,
                 'responseobject' => $this->_response,
@@ -212,24 +212,24 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $shouldSend = Mage::getStoreConfig('buckaroo/' . $payment->getMethod() . '/order_email', $this->_order->getStoreId());
         if(!$this->_order->getEmailSent() && $shouldSend)
         {
-        	$this->sendNewOrderEmail();
+            $this->sendNewOrderEmail();
         }
 
         $this->emptyCart();
 
-		Mage::getSingleton('core/session')->addSuccess(
-		    Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
-		);
+        Mage::getSingleton('core/session')->addSuccess(
+            Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
+        );
 
-		$returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
+        $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
 
         $this->_debugEmail .= 'Redirecting user to...' . $returnUrl . "\n";
 
         $this->sendDebugEmail();
 
-		header('Location:' . $returnUrl);
-		exit;
+        header('Location:' . $returnUrl);
+        exit;
     }
 
     protected function _failed()
@@ -269,7 +269,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $this->_debugEmail .= "The transaction generated an error. \n";
 
         Mage::getSingleton('core/session')->addError(
-        		Mage::helper('buckaroo3extended')->__('A technical error has occurred. Please try again. If this problem persists, please contact the shop owner.')
+                Mage::helper('buckaroo3extended')->__('A technical error has occurred. Please try again. If this problem persists, please contact the shop owner.')
         );
 
         $this->_order->addStatusHistoryComment(
@@ -307,13 +307,12 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
             case 'buckaroo3extended_afterpay2':
                 Mage::getSingleton('checkout/session')->setData('buckarooAfterpayRejected',true);
                 $message = Mage::helper('buckaroo3extended')->__(
-                    'We are sorry to inform you that the request to pay afterwards with AfterPay is not possible at' .
-                    ' this time. This can be due to various (temporary) reasons.<br/><br/> For questions about your' .
-                    ' rejection you can contact the customer service of AfterPay. Or you can visit the website of' .
-                    ' AfterPay and click ""Frequently asked questions"" through this link <a' .
-                    ' href=""http://www.afterpay.nl/page/consument-faq"">http://www.afterpay.nl/page/consument-faq<' .
-                    '/a> in the section ""Datacontrol"".<br/><br/> We advice you to choose a different payment method' .
-                    ' to complete your order.'
+                    "We are sorry to inform you that the request to pay afterwards with AfterPay is not possible at " .
+                    "this time. This can be due to various (temporary) reasons.<br/><br/> For questions about your " .
+                    "rejection you can contact the customer service of AfterPay. Or you can visit the website of " .
+                    "AfterPay and click 'Frequently asked questions' through this link " .
+                    "<a href='http://www.afterpay.nl/page/consument-faq'>http://www.afterpay.nl/page/consument-faq</a> " .
+                    "in the section 'Datacontrol'.<br/><br/> We advice you to choose a different payment method to complete your order."
                 );
             break;
             default:
@@ -350,11 +349,11 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         );
         $this->_order->save();
 
-		Mage::getSingleton('core/session')->addSuccess(
-		    Mage::helper('buckaroo3extended')->__(
-		    	'Your order has been placed succesfully. You will recieve an e-mail containing further payment instructions shortly.'
-		    )
-		);
+        Mage::getSingleton('core/session')->addSuccess(
+            Mage::helper('buckaroo3extended')->__(
+                'Your order has been placed succesfully. You will recieve an e-mail containing further payment instructions shortly.'
+            )
+        );
 
         $returnLocation = Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/success_redirect', $this->_order->getStoreId());
         $returnUrl = Mage::getUrl($returnLocation, array('_secure' => true));
@@ -362,8 +361,8 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $this->_debugEmail .= 'Redirecting user to...' . $returnUrl . '\n';
 
         $this->sendDebugEmail();
-		header('Location:' . $returnUrl);
-		exit;
+        header('Location:' . $returnUrl);
+        exit;
     }
 
     /**
@@ -477,30 +476,30 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $xPath = new DOMXPath($responseDomDoc);
 
-    	//register namespaces to use in xpath query's
-    	$xPath->registerNamespace('wsse','http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
-    	$xPath->registerNamespace('sig','http://www.w3.org/2000/09/xmldsig#');
-    	$xPath->registerNamespace('soap','http://schemas.xmlsoap.org/soap/envelope/');
+        //register namespaces to use in xpath query's
+        $xPath->registerNamespace('wsse','http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
+        $xPath->registerNamespace('sig','http://www.w3.org/2000/09/xmldsig#');
+        $xPath->registerNamespace('soap','http://schemas.xmlsoap.org/soap/envelope/');
 
         //Get the SignedInfo nodeset
-    	$SignedInfoQuery = '//wsse:Security/sig:Signature/sig:SignedInfo';
-    	$SignedInfoQueryNodeSet = $xPath->query($SignedInfoQuery);
-    	$SignedInfoNodeSet = $SignedInfoQueryNodeSet->item(0);
+        $SignedInfoQuery = '//wsse:Security/sig:Signature/sig:SignedInfo';
+        $SignedInfoQueryNodeSet = $xPath->query($SignedInfoQuery);
+        $SignedInfoNodeSet = $SignedInfoQueryNodeSet->item(0);
 
-    	//Canonicalize nodeset
-    	$signedInfo = $SignedInfoNodeSet->C14N(true, false);
+        //Canonicalize nodeset
+        $signedInfo = $SignedInfoNodeSet->C14N(true, false);
 
-    	//get the public key
-		$pubKey = openssl_get_publickey(openssl_x509_read(file_get_contents(CERTIFICATE_DIR . DS .'Checkout.pem')));
+        //get the public key
+        $pubKey = openssl_get_publickey(openssl_x509_read(file_get_contents(CERTIFICATE_DIR . DS .'Checkout.pem')));
 
-		//verify the signature
-    	$sigVerify = openssl_verify($signedInfo, $sigDecoded, $pubKey);
+        //verify the signature
+        $sigVerify = openssl_verify($signedInfo, $sigDecoded, $pubKey);
 
-    	if ($sigVerify === 1) {
-    	    $verified = true;
-    	}
+        if ($sigVerify === 1) {
+            $verified = true;
+        }
 
-    	return $verified;
+        return $verified;
     }
 
     protected function _verifyDigest()
@@ -523,24 +522,24 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $xPath = new DOMXPath($responseDomDoc);
 
-    	//register namespaces to use in xpath query's
-    	$xPath->registerNamespace('wsse','http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
-    	$xPath->registerNamespace('sig','http://www.w3.org/2000/09/xmldsig#');
-    	$xPath->registerNamespace('soap','http://schemas.xmlsoap.org/soap/envelope/');
+        //register namespaces to use in xpath query's
+        $xPath->registerNamespace('wsse','http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
+        $xPath->registerNamespace('sig','http://www.w3.org/2000/09/xmldsig#');
+        $xPath->registerNamespace('soap','http://schemas.xmlsoap.org/soap/envelope/');
 
-    	$controlHashReference = $xPath->query('//*[@Id="_control"]')->item(0);
-    	$controlHashCanonical = $controlHashReference->C14N(true, false);
-    	$controlHash = base64_encode(pack('H*',sha1($controlHashCanonical)));
+        $controlHashReference = $xPath->query('//*[@Id="_control"]')->item(0);
+        $controlHashCanonical = $controlHashReference->C14N(true, false);
+        $controlHash = base64_encode(pack('H*',sha1($controlHashCanonical)));
 
-    	$bodyHashReference = $xPath->query('//*[@Id="_body"]')->item(0);
-    	$bodyHashCanonical = $bodyHashReference->C14N(true, false);
-    	$bodyHash = base64_encode(pack('H*',sha1($bodyHashCanonical)));
+        $bodyHashReference = $xPath->query('//*[@Id="_body"]')->item(0);
+        $bodyHashCanonical = $bodyHashReference->C14N(true, false);
+        $bodyHash = base64_encode(pack('H*',sha1($bodyHashCanonical)));
 
-    	if (in_array($controlHash, $digestValues) === true && in_array($bodyHash, $digestValues) === true) {
-    	    $verified = true;
-    	}
+        if (in_array($controlHash, $digestValues) === true && in_array($bodyHash, $digestValues) === true) {
+            $verified = true;
+        }
 
-    	return $verified;
+        return $verified;
     }
 
     public function sendNewOrderEmail()

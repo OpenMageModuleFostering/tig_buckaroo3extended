@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Sofortueberweisung_Checkout_For
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/sofortueberweisung/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/sofortueberweisung/checkout/form.phtml');
         parent::_construct();
     }
 }

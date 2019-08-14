@@ -67,16 +67,16 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         $dueDate = date('Y-m-d', mktime(0, 0, 0, date("m")  , (date("d") + $dueDaysInvoice + $dueDays), date("Y")));
 
         if (array_key_exists('customVars', $vars) && array_key_exists($serviceName, $vars['customVars']) && is_array($vars['customVars'][$serviceName])) {
-		    $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
-            	'DateDue'			     => $dueDate,
-            	'InvoiceDate'			 => $invoiceDate,
+            $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
+                'DateDue'                 => $dueDate,
+                'InvoiceDate'             => $invoiceDate,
             ));
-		} else {
-    	    $vars['customVars'][$serviceName] = array(
-            	'DateDue'			     => $dueDate,
-            	'InvoiceDate'			 => $invoiceDate,
-    	    );
-		}
+        } else {
+            $vars['customVars'][$serviceName] = array(
+                'DateDue'                 => $dueDate,
+                'InvoiceDate'             => $invoiceDate,
+            );
+        }
 
         return $vars;
     }
@@ -88,29 +88,29 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      */
     protected function _addAdditionalCreditManagementVariables(&$vars)
     {
-    	$VAT = 0;
-    	foreach($this->_order->getFullTaxInfo() as $taxRecord)
-    	{
-    		$VAT += $taxRecord['amount'];
-    	}
+        $VAT = 0;
+        foreach($this->_order->getFullTaxInfo() as $taxRecord)
+        {
+            $VAT += $taxRecord['amount'];
+        }
 
-    	$reminderLevel = Mage::getStoreConfig('buckaroo/buckaroo3extended_' . $this->_method . '/reminder_level', $this->getStoreId());
+        $reminderLevel = Mage::getStoreConfig('buckaroo/buckaroo3extended_' . $this->_method . '/reminder_level', $this->getStoreId());
 
-    	$creditmanagementArray = array(
-    			'AmountVat'        => $VAT,
-    			'CustomerType'     => 1,
-    			'MaxReminderLevel' => $reminderLevel,
-    	);
+        $creditmanagementArray = array(
+                'AmountVat'        => $VAT,
+                'CustomerType'     => 1,
+                'MaxReminderLevel' => $reminderLevel,
+        );
 
-    	if (array_key_exists('customVars', $vars) && is_array($vars['customVars']['creditmanagement'])) {
-    		$vars['customVars']['creditmanagement'] = array_merge($vars['customVars']['creditmanagement'], $creditmanagementArray);
-    	} else {
-    		$vars['customVars']['creditmanagement'] = $creditmanagementArray;
-    	}
+        if (array_key_exists('customVars', $vars) && is_array($vars['customVars']['creditmanagement'])) {
+            $vars['customVars']['creditmanagement'] = array_merge($vars['customVars']['creditmanagement'], $creditmanagementArray);
+        } else {
+            $vars['customVars']['creditmanagement'] = $creditmanagementArray;
+        }
 
-    	if (empty($vars['customVars']['creditmanagement']['PhoneNumber']) && !empty($vars['customVars']['creditmanagement']['MobilePhoneNumber'])) {
-    		$vars['customVars']['creditmanagement']['PhoneNumber'] = $vars['customVars']['creditmanagement']['MobilePhoneNumber'];
-    	}
+        if (empty($vars['customVars']['creditmanagement']['PhoneNumber']) && !empty($vars['customVars']['creditmanagement']['MobilePhoneNumber'])) {
+            $vars['customVars']['creditmanagement']['PhoneNumber'] = $vars['customVars']['creditmanagement']['MobilePhoneNumber'];
+        }
     }
 
     /**
@@ -129,15 +129,15 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         }
 
         if (isset($additionalFields['BPE_Customergender'])) {
-        	$gender = $additionalFields['BPE_Customergender'];
+            $gender = $additionalFields['BPE_Customergender'];
         } else {
-        	$gender = 0;
+            $gender = 0;
         }
 
         if (isset($additionalFields['BPE_customerbirthdate'])) {
-        	$dob = $additionalFields['BPE_customerbirthdate'];
+            $dob = $additionalFields['BPE_customerbirthdate'];
         } else {
-        	$dob = '';
+            $dob = '';
         }
 
         if (isset($additionalFields['BPE_Customermail'])) {
@@ -147,81 +147,81 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         }
 
         $customerId = $this->_order->getCustomerId()
-        	? $this->_order->getCustomerId()
-        	: $this->_order->getIncrementId();
+            ? $this->_order->getCustomerId()
+            : $this->_order->getIncrementId();
 
         $firstName              = $this->_billingInfo['firstname'];
-		$lastName               = $this->_billingInfo['lastname'];
-		$address                = $this->_processAddressCM();
-		$houseNumber            = $address['house_number'];
-		$houseNumberSuffix      = $address['number_addition'];
-		$street                 = $address['street'];
-		$zipcode                = $this->_billingInfo['zip'];
-		$city                   = $this->_billingInfo['city'];
-		$state                  = $this->_billingInfo['state'];
-		$fax                    = $this->_billingInfo['fax'];
-		$country                = $this->_billingInfo['countryCode'];
-		$processedPhoneNumber   = $this->_processPhoneNumberCM();
-		$customerLastNamePrefix = $this->_getCustomerLastNamePrefix();
-		$customerInitials       = $this->_getInitialsCM();
+        $lastName               = $this->_billingInfo['lastname'];
+        $address                = $this->_processAddressCM();
+        $houseNumber            = $address['house_number'];
+        $houseNumberSuffix      = $address['number_addition'];
+        $street                 = $address['street'];
+        $zipcode                = $this->_billingInfo['zip'];
+        $city                   = $this->_billingInfo['city'];
+        $state                  = $this->_billingInfo['state'];
+        $fax                    = $this->_billingInfo['fax'];
+        $country                = $this->_billingInfo['countryCode'];
+        $processedPhoneNumber   = $this->_processPhoneNumberCM();
+        $customerLastNamePrefix = $this->_getCustomerLastNamePrefix();
+        $customerInitials       = $this->_getInitialsCM();
 
-		$array = array(
-        	'CustomerCode'           => $customerId,
-        	'CustomerFirstName'      => $firstName,
-        	'CustomerLastName'       => $lastName,
-        	'FaxNumber'              => $fax,
-        	'CustomerInitials'       => $customerInitials,
-        	'CustomerLastNamePrefix' => $customerLastNamePrefix,
-        	'CustomerBirthDate'      => $dob,
-        	'Customergender'         => $gender,
-        	'Customeremail'          => $mail,
-        	'ZipCode'                => array(
+        $array = array(
+            'CustomerCode'           => $customerId,
+            'CustomerFirstName'      => $firstName,
+            'CustomerLastName'       => $lastName,
+            'FaxNumber'              => $fax,
+            'CustomerInitials'       => $customerInitials,
+            'CustomerLastNamePrefix' => $customerLastNamePrefix,
+            'CustomerBirthDate'      => $dob,
+            'Customergender'         => $gender,
+            'Customeremail'          => $mail,
+            'ZipCode'                => array(
                 'value' => $zipcode,
                 'group' => 'address'
             ),
-        	'City'                   => array(
+            'City'                   => array(
                 'value' => $city,
                 'group' => 'address'
             ),
-        	'State'                  => array(
+            'State'                  => array(
                 'value' => $state,
                 'group' => 'address'
             ),
-        	'Street'                 => array(
+            'Street'                 => array(
                 'value' => $street,
                 'group' => 'address'
             ),
-        	'HouseNumber'            => array(
+            'HouseNumber'            => array(
                 'value' => $houseNumber,
                 'group' => 'address'
             ),
-        	'HouseNumberSuffix'      => array(
+            'HouseNumberSuffix'      => array(
                 'value' => $houseNumberSuffix,
                 'group' => 'address'
             ),
-        	'Country'                => array(
+            'Country'                => array(
                 'value' => $country,
                 'group' => 'address'
             )
         );
 
-		if (array_key_exists('customVars', $vars) && array_key_exists($serviceName, $vars['customVars']) && is_array($vars['customVars'][$serviceName])) {
-		    $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], $array);
-		} else {
-    		$vars['customVars'][$serviceName] = $array;
-		}
+        if (array_key_exists('customVars', $vars) && array_key_exists($serviceName, $vars['customVars']) && is_array($vars['customVars'][$serviceName])) {
+            $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], $array);
+        } else {
+            $vars['customVars'][$serviceName] = $array;
+        }
 
-		if ($processedPhoneNumber['mobile']) {
-		    $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
-		        'MobilePhoneNumber' => $processedPhoneNumber['clean'],
-		    ));
-		} else {
-		    $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
-		        'PhoneNumber' => $processedPhoneNumber['clean'],
-		    ));
-		}
+        if ($processedPhoneNumber['mobile']) {
+            $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
+                'MobilePhoneNumber' => $processedPhoneNumber['clean'],
+            ));
+        } else {
+            $vars['customVars'][$serviceName] = array_merge($vars['customVars'][$serviceName], array(
+                'PhoneNumber' => $processedPhoneNumber['clean'],
+            ));
+        }
 
-		return $vars;
+        return $vars;
     }
 
     /**
@@ -231,18 +231,18 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      * @return string
      */
     protected function _getInitialsCM()
-	{
-		$firstname = $this->_billingInfo['firstname'];
+    {
+        $firstname = $this->_billingInfo['firstname'];
 
-		$initials = '';
-		$firstnameParts = explode(' ', $firstname);
+        $initials = '';
+        $firstnameParts = explode(' ', $firstname);
 
-		foreach ($firstnameParts as $namePart) {
-			$initials .= strtoupper($namePart[0]) . '.';
-		}
+        foreach ($firstnameParts as $namePart) {
+            $initials .= strtoupper($namePart[0]) . '.';
+        }
 
-		return $initials;
-	}
+        return $initials;
+    }
 
     /**
      *
@@ -251,31 +251,31 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      * @return array
      */
     protected function _processAddressCM()
-	{
-		//get address from billingInfo
-		$address = $this->_billingInfo['address'];
+    {
+        //get address from billingInfo
+        $address = $this->_billingInfo['address'];
 
-		$ret = array();
-		$ret['house_number'] = '';
-		$ret['number_addition'] = '';
-		if (preg_match('#^(.*?)([0-9]+)(.*)#s', $address, $matches)) {
-			if ('' == $matches[1]) {
-				// Number at beginning
-				$ret['house_number'] = trim($matches[2]);
-				$ret['street']		 = trim($matches[3]);
-			} else {
-				// Number at end
-				$ret['street']			= trim($matches[1]);
-	 			$ret['house_number']    = trim($matches[2]);
-	 			$ret['number_addition'] = trim($matches[3]);
-			}
-		} else {
-	 		// No number
-	 		$ret['street'] = $address;
-		}
+        $ret = array();
+        $ret['house_number'] = '';
+        $ret['number_addition'] = '';
+        if (preg_match('#^(.*?)([0-9]+)(.*)#s', $address, $matches)) {
+            if ('' == $matches[1]) {
+                // Number at beginning
+                $ret['house_number'] = trim($matches[2]);
+                $ret['street']         = trim($matches[3]);
+            } else {
+                // Number at end
+                $ret['street']            = trim($matches[1]);
+                 $ret['house_number']    = trim($matches[2]);
+                 $ret['number_addition'] = trim($matches[3]);
+            }
+        } else {
+             // No number
+             $ret['street'] = $address;
+        }
 
-	 	return $ret;
-	}
+         return $ret;
+    }
 
     /**
      * processes the customer's phone number so as to fit the betaalgarant SOAP request
@@ -283,16 +283,16 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      * @return array
      */
     protected function _processPhoneNumberCM()
-	{
-	    $additionalFields = Mage::getSingleton('checkout/session')->getData('additionalFields');
-	    if (isset($additionalFields['BPE_PhoneNumber'])) {
-	        $number = $additionalFields['BPE_PhoneNumber'];
-	    } else {
+    {
+        $additionalFields = Mage::getSingleton('checkout/session')->getData('additionalFields');
+        if (isset($additionalFields['BPE_PhoneNumber'])) {
+            $number = $additionalFields['BPE_PhoneNumber'];
+        } else {
             $number = ($this->_billingInfo['telephone'])?:'1234567890';
-	    }
+        }
 
 
-		//the final output must like this: 0031123456789 for mobile: 0031612345678
+        //the final output must like this: 0031123456789 for mobile: 0031612345678
         //so 13 characters max else number is not valid
         //but for some error correction we try to find if there is some faulty notation
 
@@ -341,7 +341,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         }
 
         return $return;
-	}
+    }
 
     /**
      * validate the phonenumber
@@ -370,14 +370,14 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         return $number;
     }
 
-	/**
-	 * Checks if the number is a mobile number or not.
-	 *
-	 * @param string $number
-	 *
-	 * @return boolean
-	 */
-	protected function _isMobileNumber($number) {
+    /**
+     * Checks if the number is a mobile number or not.
+     *
+     * @param string $number
+     *
+     * @return boolean
+     */
+    protected function _isMobileNumber($number) {
         //this function only checks if it is a mobile number, not checking valid notation
         $checkMobileArray = array("3106","316","06","00316","003106");
         foreach($checkMobileArray as $key => $value) {
@@ -394,21 +394,21 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      * @return string
      */
     protected function _getCustomerLastNamePrefix()
-	{
-	    $lastName = $this->_billingInfo['lastname'];
+    {
+        $lastName = $this->_billingInfo['lastname'];
 
-	    $lastNameBits = explode(' ', $lastName);
+        $lastNameBits = explode(' ', $lastName);
 
-	    if (count($lastNameBits === 1)) {
-	        return '';
-	    }
+        if (count($lastNameBits === 1)) {
+            return '';
+        }
 
-	    $lastNameEnd = end($lastNameBits);
-	    unset($lastNameEnd);
+        $lastNameEnd = end($lastNameBits);
+        unset($lastNameEnd);
 
-	    $prefix = implode(' ', $lastNameBits);
-	    return $prefix;
-	}
+        $prefix = implode(' ', $lastNameBits);
+        return $prefix;
+    }
 
     /**
      * Certain payment methods require a list of other payment methods that will be used to finalize the payment.
@@ -485,13 +485,13 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
      * @param $order Mage_Sales_Model_Order
      */
     protected function _updateSecureStatus($enrolled, $authenticated, $order)
-	{
+    {
         $shouldHold = Mage::getStoreConfig('buckaroo/' . $this->_code . '/unsecure_hold', $order->getStoreId());
 
         if (
-        	(!$enrolled || !$authenticated)
-        	&& $shouldHold
-        	&& $order->canHold())
+            (!$enrolled || !$authenticated)
+            && $shouldHold
+            && $order->canHold())
         {
             $order->hold()->save();
         }
@@ -514,7 +514,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
         }
 
         $order->save();
-	}
+    }
 
     /**
      * @return int|mixed

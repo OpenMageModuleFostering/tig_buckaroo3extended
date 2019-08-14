@@ -21,11 +21,11 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_Hint
         'visa',
         'payperemail',
         'paymentguarantee',
-    	'giftcards',
-    	'empayment',
-    	'maestro',
-    	'visaelectron',
-    	'vpay',
+        'giftcards',
+        'empayment',
+        'maestro',
+        'visaelectron',
+        'vpay',
         'bancontactmrcash',
         'eps',
         'afterpay',
@@ -38,8 +38,8 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_System_Config_Hint
     );
 
     public $config = array(
-    	'advanced',
-    	'certificate',
+        'advanced',
+        'certificate',
     );
 
     /**

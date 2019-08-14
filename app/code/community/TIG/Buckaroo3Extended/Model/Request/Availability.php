@@ -2,14 +2,14 @@
 class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Extended_Model_Abstract
 {
     public static $allowedCurrencies = array(
-		'EUR',
-		'GBP',
-		'USD',
-		'CAD',
-		'SHR',
-		'NOK',
-		'SEK',
-		'DKK',
+        'EUR',
+        'GBP',
+        'USD',
+        'CAD',
+        'SHR',
+        'NOK',
+        'SEK',
+        'DKK',
         'ARS',
         'BRL',
         'HRK',
@@ -24,7 +24,7 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
         'PLN',
         'CHF',
         'CZK',
-	);
+    );
 
     /**
      * Various checks to determine if Buckaroo payment options should be available to customers
@@ -34,30 +34,30 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
      */
     public static function canUseBuckaroo($quote = null)
     {
-    	$return = false;
+        $return = false;
 
-    	$configValues    = self::_checkConfigValues();
+        $configValues    = self::_checkConfigValues();
 
-    	$currencyAllowed = self::_checkCurrencyAllowed();
+        $currencyAllowed = self::_checkCurrencyAllowed();
 
-    	$ipAllowed       = self::_checkIpAllowed();
+        $ipAllowed       = self::_checkIpAllowed();
 
-    	$isZeroPayment   = self::_checkGrandTotalNotZero($quote);
+        $isZeroPayment   = self::_checkGrandTotalNotZero($quote);
 
-    	$isEnterprise    = @mage::getModel('Enterprise_Reward_Model_Reward');
+        $isEnterprise    = @mage::getModel('Enterprise_Reward_Model_Reward');
 
-    	if (
-    	    $configValues        === true
-    	    && $currencyAllowed  === true
-    	    && $ipAllowed        === true
-    	    && (
-    	        $isZeroPayment   === false || $isEnterprise
-    	        )
-    	)
-    	{
-    	    $return = true;
-    	}
-    	return $return;
+        if (
+            $configValues        === true
+            && $currencyAllowed  === true
+            && $ipAllowed        === true
+            && (
+                $isZeroPayment   === false || $isEnterprise
+                )
+        )
+        {
+            $return = true;
+        }
+        return $return;
     }
 
     /**
@@ -71,30 +71,30 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
         $configValues = false;
 
         //config values that need to be entered
-    	$configEnabled             = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/active', Mage::app()->getStore()->getStoreId());
-    	$merchantKeyEntered        = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/key', Mage::app()->getStore()->getStoreId());
-    	$thumbprintEntered         = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/thumbprint', Mage::app()->getStore()->getStoreId());
-    	$orderStatusSuccessEntered = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_success', Mage::app()->getStore()->getStoreId());
-    	$orderStatusFailedEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_failed', Mage::app()->getStore()->getStoreId());
+        $configEnabled             = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/active', Mage::app()->getStore()->getStoreId());
+        $merchantKeyEntered        = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/key', Mage::app()->getStore()->getStoreId());
+        $thumbprintEntered         = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/thumbprint', Mage::app()->getStore()->getStoreId());
+        $orderStatusSuccessEntered = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_success', Mage::app()->getStore()->getStoreId());
+        $orderStatusFailedEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_failed', Mage::app()->getStore()->getStoreId());
 
-    	//advanced config values that need to be entered
-    	$newOrderStatusEntered     = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status', Mage::app()->getStore()->getStoreId());
-    	$orderStateSuccessEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_success', Mage::app()->getStore()->getStoreId());
-    	$orderStateFailedEntered   = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_failed', Mage::app()->getStore()->getStoreId());
+        //advanced config values that need to be entered
+        $newOrderStatusEntered     = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status', Mage::app()->getStore()->getStoreId());
+        $orderStateSuccessEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_success', Mage::app()->getStore()->getStoreId());
+        $orderStateFailedEntered   = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_failed', Mage::app()->getStore()->getStoreId());
 
-    	if ($configEnabled
-    		&& $merchantKeyEntered
-    		&& $thumbprintEntered
-    		&& $orderStatusSuccessEntered
-    		&& $orderStatusFailedEntered
-    		&& $newOrderStatusEntered
-    		&& $orderStateSuccessEntered
-    		&& $orderStateFailedEntered
-    	)
-    	{
-    	    $configValues = true;
-    	}
-    	return $configValues;
+        if ($configEnabled
+            && $merchantKeyEntered
+            && $thumbprintEntered
+            && $orderStatusSuccessEntered
+            && $orderStatusFailedEntered
+            && $newOrderStatusEntered
+            && $orderStateSuccessEntered
+            && $orderStateFailedEntered
+        )
+        {
+            $configValues = true;
+        }
+        return $configValues;
     }
 
     /**
@@ -106,13 +106,13 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
     {
         $allowed = false;
 
-    	$baseCurrency = Mage::app()->getStore()->getBaseCurrency()->getCode();
+        $baseCurrency = Mage::app()->getStore()->getBaseCurrency()->getCode();
 
-    	if (in_array($baseCurrency, self::$allowedCurrencies)) {
-    	    $allowed = true;
-    	}
+        if (in_array($baseCurrency, self::$allowedCurrencies)) {
+            $allowed = true;
+        }
 
-    	return $allowed;
+        return $allowed;
     }
 
     /**
@@ -126,17 +126,17 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
         $ipAllowed = false;
 
         if (Mage::getStoreConfig('dev/restrict/allow_ips') && Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/limit_by_ip'))
-    	{
-    		$allowedIp = explode(',', mage::getStoreConfig('dev/restrict/allow_ips'));
-    		if (in_array(Mage::helper('core/http')->getRemoteAddr(), $allowedIp))
-    		{
-    			$ipAllowed = true;
-    		}
-    	} else {
-    		$ipAllowed = true;
-    	}
+        {
+            $allowedIp = explode(',', mage::getStoreConfig('dev/restrict/allow_ips'));
+            if (in_array(Mage::helper('core/http')->getRemoteAddr(), $allowedIp))
+            {
+                $ipAllowed = true;
+            }
+        } else {
+            $ipAllowed = true;
+        }
 
-    	return $ipAllowed;
+        return $ipAllowed;
     }
 
     /**
@@ -149,9 +149,9 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
      */
     private static function _checkGrandTotalNotZero($quote)
     {
-    	if (empty($quote)) {
-    		return true;
-    	}
+        if (empty($quote)) {
+            return true;
+        }
         $isZero = false;
 
         if ($quote->getBaseGrandTotal() < 0.01) {

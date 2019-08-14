@@ -1,14 +1,14 @@
 <?php
 class TIG_Buckaroo3Extended_CheckoutController extends Mage_Core_Controller_Front_Action
 {
-	public function checkoutAction()
-	{
+    public function checkoutAction()
+    {
         /**
          * @var TIG_Buckaroo3Extended_Model_Request_Abstract $request
          */
         $request = Mage::getModel('buckaroo3extended/request_abstract');
         $request->sendRequest();
-	}
+    }
 
     public function saveDataAction()
     {

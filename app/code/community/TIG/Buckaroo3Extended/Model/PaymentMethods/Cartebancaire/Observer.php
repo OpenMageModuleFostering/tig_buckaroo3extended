@@ -150,9 +150,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Cartebancaire_Observer extends 
               ->setBuckarooSecureAuthenticated($authenticated)
               ->save();
 
-		if ($order->getTransactionKey()) {
-			$this->_updateSecureStatus($enrolled, $authenticated, $order);
-		}
+        if ($order->getTransactionKey()) {
+            $this->_updateSecureStatus($enrolled, $authenticated, $order);
+        }
 
         return $this;
     }
@@ -167,12 +167,12 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Cartebancaire_Observer extends 
         $enrolled = $order->getBuckarooSecureEnrolled();
         $authenticated = $order->getBuckarooSecureAuthenticated();
 
-		if (is_null($enrolled) || is_null($authenticated)) {
-			return $this;
-		}
+        if (is_null($enrolled) || is_null($authenticated)) {
+            return $this;
+        }
 
-		$this->_updateSecureStatus($enrolled, $authenticated, $order);
+        $this->_updateSecureStatus($enrolled, $authenticated, $order);
 
-		return $this;
+        return $this;
     }
 }

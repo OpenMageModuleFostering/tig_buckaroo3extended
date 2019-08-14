@@ -68,7 +68,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Masterpass_Observer
 
         $array = array(
             $this->_method     => array(
-                'action'	=> 'PaymentInvitation',
+                'action'    => 'PaymentInvitation',
                 'version'   => $serviceVersion,
             ),
         );
@@ -82,7 +82,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Masterpass_Observer
 
         if (Mage::getStoreConfig('buckaroo/buckaroo3extended_' .  $this->_method . '/use_creditmanagement', Mage::app()->getStore()->getStoreId())) {
             $array['creditmanagement'] = array(
-                'action'	=> 'Invoice',
+                'action'    => 'Invoice',
                 'version'   => 1,
             );
         }

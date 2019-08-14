@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Paypal_Checkout_Form extends TI
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/paypal/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/paypal/checkout/form.phtml');
         parent::_construct();
     }
 }

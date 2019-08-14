@@ -4,7 +4,7 @@ class TIG_Buckaroo3Extended_Model_Sources_Ideal_ServiceVersion
     public function toOptionArray()
     {
         $helper = Mage::helper('buckaroo3extended');
-        
+
         $array = array(
             array(
                 'label' => $helper->__('1'),
@@ -15,7 +15,7 @@ class TIG_Buckaroo3Extended_Model_Sources_Ideal_ServiceVersion
                 'value' => 2,
             ),
         );
-        
-    	return $array;
+
+        return $array;
     }
 }

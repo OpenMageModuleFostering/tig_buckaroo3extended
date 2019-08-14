@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Afterpay_Checkout_Form extends 
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/afterpay/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/afterpay/checkout/form.phtml');
         parent::_construct();
     }
 

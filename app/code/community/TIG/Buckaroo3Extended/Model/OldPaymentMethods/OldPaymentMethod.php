@@ -2,7 +2,7 @@
 class TIG_Buckaroo3Extended_Model_OldPaymentMethods_OldPaymentMethod extends Mage_Payment_Model_Method_Abstract
 {
     protected $_code = 'oldBuckaroo';
-    
+
     protected $_isGateway               = false;
     protected $_canAuthorize            = false;
     protected $_canCapture              = false;
@@ -13,14 +13,14 @@ class TIG_Buckaroo3Extended_Model_OldPaymentMethods_OldPaymentMethod extends Mag
     protected $_canUseCheckout          = false;
     protected $_canUseForMultishipping  = false;
     protected $_canSaveCc               = false;
-    
+
     public function getOrderPlaceRedirectUrl()
     {
-        
+
     }
-    
-	public function isAvailable($quote = null)
+
+    public function isAvailable($quote = null)
     {
-    	return false;
+        return false;
     }
 }

@@ -76,6 +76,18 @@ class TIG_Buckaroo3Extended_Block_Adminhtml_Sales_Order_Creditmemo_Create_Refund
     }
 
     /**
+     * Returns whether there's a transaction id on the invoice
+     *
+     * @return bool
+     */
+    public function isBuckarooInvoiced()
+    {
+        $invoiceId = Mage::app()->getRequest()->getParam('invoice_id');
+        $invoice = Mage::getModel('sales/order_invoice')->load($invoiceId);
+        return (bool)$invoice->getTransactionId();
+    }
+
+    /**
      * Check if a payment method can be found before rendering the template.
      *
      * @return string

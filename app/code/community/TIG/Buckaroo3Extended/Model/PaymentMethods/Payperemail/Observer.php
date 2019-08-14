@@ -66,9 +66,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Payperemail_Observer extends TI
         }
 
         if (!Mage::helper('buckaroo3extended')->isAdmin()) {
-        	$additionalFields = Mage::getSingleton('checkout/session')->getData('additionalFields');
+            $additionalFields = Mage::getSingleton('checkout/session')->getData('additionalFields');
         } else {
-        	$additionalFields = Mage::getSingleton('core/session')->getData('additionalFields');
+            $additionalFields = Mage::getSingleton('core/session')->getData('additionalFields');
         }
 
         if (is_array($additionalFields)
@@ -87,7 +87,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Payperemail_Observer extends TI
             $array = array();
         }
         $array['MerchantSendsEmail'] = Mage::getStoreConfig('buckaroo/buckaroo3extended_payperemail/send_mail'
-                                       , Mage::app()->getStore()->getStoreId()) ? 'false' : 'true';
+                                       , $this->_order->getStoreId()) ? 'false' : 'true';
         $array['PaymentMethodsAllowed'] = $this->_getPaymentMethodsAllowed();
 
         if (array_key_exists('customVars', $vars) && array_key_exists($this->_method, $vars['customVars']) && is_array($vars['customVars'][$this->_method])) {

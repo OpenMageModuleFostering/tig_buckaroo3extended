@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Paysafecard_Checkout_Form exten
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/paysafecard/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/paysafecard/checkout/form.phtml');
         parent::_construct();
     }
 }

@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Mastercard_Checkout_Form extend
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/mastercard/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/mastercard/checkout/form.phtml');
         parent::_construct();
     }
 }

@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Maestro_Checkout_Form extends T
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/maestro/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/maestro/checkout/form.phtml');
         parent::_construct();
     }
 }

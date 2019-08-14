@@ -103,9 +103,9 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
 
         //hack to prevent SQL errors when using onestepcheckout
         if(!Mage::helper('buckaroo3extended')->isAdmin()) {
-        	Mage::getSingleton('checkout/session')->getQuote()->setReservedOrderId(null)->save();
+            Mage::getSingleton('checkout/session')->getQuote()->setReservedOrderId(null)->save();
         }else {
-        	Mage::getSingleton('adminhtml/session_quote')->getQuote()->setReservedOrderId(null)->save();
+            Mage::getSingleton('adminhtml/session_quote')->getQuote()->setReservedOrderId(null)->save();
         }
 
 
@@ -166,7 +166,7 @@ class TIG_Buckaroo3Extended_Model_Request_Abstract extends TIG_Buckaroo3Extended
     protected function _addServices()
     {
         $this->_vars['services'][$this->_method] = array(
-            'action'	=> 'Pay',
+            'action'    => 'Pay',
             'version'   => 1,
         );
     }

@@ -42,6 +42,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Payperemail_PaymentMethod exten
             'lastname'  => $_POST['buckaroo3extended_payperemail_BPE_Customerlastname'],
             'mail'      => $_POST['buckaroo3extended_payperemail_BPE_Customermail'],
         ));
+
         return parent::assignData($data);
     }
 }

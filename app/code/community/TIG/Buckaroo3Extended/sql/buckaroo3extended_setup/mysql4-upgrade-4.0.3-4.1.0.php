@@ -1,4 +1,4 @@
-<?php 
+<?php
 $installer = $this;
 
 $installer->startSetup();
@@ -25,12 +25,12 @@ SQL3;
 $sql4 = <<<SQL4
 CREATE TABLE `{$certificatesTable}`
 (
-	`certificate_id` INT(7) NOT NULL auto_increment,
-	`certificate` TEXT NOT NULL,
-	`certificate_name` VARCHAR(15) NOT NULL,
-	`upload_date` DATETIME NOT NULL,
-	PRIMARY KEY  (`certificate_id`),
-	UNIQUE (`certificate_name`)
+    `certificate_id` INT(7) NOT NULL auto_increment,
+    `certificate` TEXT NOT NULL,
+    `certificate_name` VARCHAR(15) NOT NULL,
+    `upload_date` DATETIME NOT NULL,
+    PRIMARY KEY  (`certificate_id`),
+    UNIQUE (`certificate_name`)
 )
 
 SQL4;
@@ -41,7 +41,7 @@ try {
     $installer->run($sql3);
     $installer->run($sql4);
 } catch (Exception $e) {
-    
+
 }
 
 $installer->endSetup();

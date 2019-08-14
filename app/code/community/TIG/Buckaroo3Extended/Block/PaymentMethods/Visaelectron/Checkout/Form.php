@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Visaelectron_Checkout_Form exte
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/visaelectron/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/visaelectron/checkout/form.phtml');
         parent::_construct();
     }
 }

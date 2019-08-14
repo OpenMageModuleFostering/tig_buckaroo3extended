@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Ideal_Checkout_Form extends TIG
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/ideal/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/ideal/checkout/form.phtml');
         $this->setIssuers();
         parent::_construct();
     }

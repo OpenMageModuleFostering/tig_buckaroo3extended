@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
 {
     protected $_code = 'buckaroo3extended_ideal';
     protected $_method = 'ideal';
-    
+
     public function buckaroo3extended_request_addservices(Varien_Event_Observer $observer)
     {
         if($this->_isChosenMethod($observer) === false) {
@@ -14,25 +14,25 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
 
         $vars = $request->getVars();
         $serviceVersion = $this->_getServiceVersion();
-        
+
         $array = array(
             $this->_method     => array(
-                'action'	=> 'Pay',
+                'action'    => 'Pay',
                 'version'   => $serviceVersion,
             ),
         );
-        
+
         $order = $request->getOrder();
         $order->setBuckarooServiceVersionUsed($serviceVersion)
               ->save();
-        
+
         if (Mage::getStoreConfig('buckaroo/buckaroo3extended_' .  $this->_method . '/use_creditmanagement', Mage::app()->getStore()->getStoreId())) {
-        	$array['creditmanagement'] = array(
-        			'action'	=> 'Invoice',
-        			'version'   => 1,
-        	);
+            $array['creditmanagement'] = array(
+                    'action'    => 'Invoice',
+                    'version'   => 1,
+            );
         }
-        
+
         if (array_key_exists('services', $vars) && is_array($vars['services'])) {
             $vars['services'] = array_merge($vars['services'], $array);
         } else {
@@ -57,11 +57,11 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
         $vars = $request->getVars();
 
         if (Mage::getStoreConfig('buckaroo/buckaroo3extended_' . $this->_method . '/use_creditmanagement', Mage::app()->getStore()->getStoreId())) {
-        	$this->_addCustomerVariables($vars);
-        	$this->_addCreditManagement($vars);
-        	$this->_addAdditionalCreditManagementVariables($vars);
+            $this->_addCustomerVariables($vars);
+            $this->_addCreditManagement($vars);
+            $this->_addAdditionalCreditManagementVariables($vars);
         }
-        
+
         $issuer = $this->_getIssuer();
         $array = array(
             'issuer' => $issuer,
@@ -71,7 +71,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
         } else {
             $vars['customVars'][$this->_method] = $array;
         }
-        
+
         $request->setVars($vars);
 
         return $this;
@@ -111,7 +111,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
 
         return $issuer;
     }
-    
+
     public function buckaroo3extended_refund_request_setmethod(Varien_Event_Observer $observer)
     {
         if($this->_isChosenMethod($observer) === false) {
@@ -126,7 +126,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
 
         return $this;
     }
-    
+
     public function buckaroo3extended_refund_request_addservices(Varien_Event_Observer $observer)
     {
         if($this->_isChosenMethod($observer) === false) {
@@ -134,15 +134,15 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
         }
 
         $refundRequest = $observer->getRequest();
-        
+
         $vars = $refundRequest->getVars();
         $serviceVersion = $this->_getRefundServiceVersion($refundRequest->getOrder());
-        
+
         $array = array(
-            'action'	=> 'Refund',
+            'action'    => 'Refund',
             'version'   => $serviceVersion,
         );
-        
+
         if (array_key_exists('services', $vars) && is_array($vars['services'][$this->_method])) {
             $vars['services'][$this->_method] = array_merge($vars['services'][$this->_method], $array);
         } else {
@@ -153,7 +153,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Ideal_Observer extends TIG_Buck
 
         return $this;
     }
-    
+
     public function buckaroo3extended_refund_request_addcustomvars(Varien_Event_Observer $observer)
     {
         if($this->_isChosenMethod($observer) === false) {

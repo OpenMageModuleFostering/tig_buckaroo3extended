@@ -4,14 +4,14 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
     protected function _success()
     {
         $this->_debugEmail .= "The request was successful \n";
-		if(!$this->_order->getEmailSent())
+        if(!$this->_order->getEmailSent())
         {
-        	$this->_order->sendNewOrderEmail();
+            $this->_order->sendNewOrderEmail();
         }
-        
-		Mage::getSingleton('core/session')->addSuccess(
-		    Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
-		);
+
+        Mage::getSingleton('core/session')->addSuccess(
+            Mage::helper('buckaroo3extended')->__('Your order has been placed succesfully.')
+        );
         $this->sendDebugEmail();
     }
 
@@ -31,9 +31,9 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
     protected function _error()
     {
         $this->_debugEmail .= "The request generated an error \n";
-		
+
         $this->_order->cancel()->save();
-        
+
         $this->_debugEmail .= "I have cancelled the order! \n";
 
         $this->sendDebugEmail();
@@ -44,11 +44,11 @@ class TIG_Buckaroo3Extended_Model_Response_BackendOrder extends TIG_Buckaroo3Ext
     {
         $this->_debugEmail .= "The request was neutral \n";
 
-		Mage::getSingleton('core/session')->addSuccess(
-		    Mage::helper('buckaroo3extended')->__(
-		    	'Your order has been placed succesfully. You will recieve an e-mail containing further payment instructions shortly.'
-		    )
-		);
+        Mage::getSingleton('core/session')->addSuccess(
+            Mage::helper('buckaroo3extended')->__(
+                'Your order has been placed succesfully. You will recieve an e-mail containing further payment instructions shortly.'
+            )
+        );
 
         $this->sendDebugEmail();
     }

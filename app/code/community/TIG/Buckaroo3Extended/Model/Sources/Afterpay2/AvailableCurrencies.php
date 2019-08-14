@@ -11,6 +11,6 @@ class TIG_Buckaroo3Extended_Model_Sources_Afterpay2_AvailableCurrencies
             $array[] = array('value' => $allowedCurrency, 'label' => $allowedCurrency);
         }
 
-    	return $array;
+        return $array;
     }
 }

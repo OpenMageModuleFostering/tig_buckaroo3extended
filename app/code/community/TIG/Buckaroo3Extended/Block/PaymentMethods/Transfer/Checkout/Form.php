@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Transfer_Checkout_Form extends 
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/transfer/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/transfer/checkout/form.phtml');
         parent::_construct();
     }
 }

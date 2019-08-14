@@ -3,7 +3,7 @@ class TIG_Buckaroo3Extended_Block_PaymentMethods_Visa_Checkout_Form extends TIG_
 {
     public function __construct()
     {
-		$this->setTemplate('buckaroo3extended/visa/checkout/form.phtml');
+        $this->setTemplate('buckaroo3extended/visa/checkout/form.phtml');
         parent::_construct();
     }
 }

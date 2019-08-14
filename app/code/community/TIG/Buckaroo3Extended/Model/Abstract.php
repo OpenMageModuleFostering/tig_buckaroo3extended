@@ -411,9 +411,14 @@ class TIG_Buckaroo3Extended_Model_Abstract extends Mage_Payment_Model_Method_Abs
         } else {
             $currenciesAllowed = array('EUR');
         }
+
         $currenciesAllowedConfig = explode(',', $currenciesAllowedConfig);
 
         $currentCurrency = Mage::app()->getStore()->getCurrentCurrencyCode();
+
+        if ($this->_order->getOrderCurrencyCode() != $currentCurrency) {
+            $currentCurrency = $this->_order->getOrderCurrencyCode();
+        }
 
         // currency is not available for this module
         if (in_array($currentCurrency, $currenciesAllowed)

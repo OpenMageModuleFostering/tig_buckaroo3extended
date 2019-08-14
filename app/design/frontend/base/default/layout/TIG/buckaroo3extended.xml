@@ -36,8 +36,12 @@
 			</action>
 			<action method="addItem">
 				<type>skin_js</type>
-				<name>js/TIG/Buckaroo3Extended/paymentGuaranteeTermsAndConditions.js</name>
+				<name>js/TIG/Buckaroo3Extended/paymentGuaranteeObserver.js</name>
 			</action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/TIG/Buckaroo3Extended/afterpayObserver.js</name>
+            </action>
 		</reference>
 		<reference name="before_body_end">
 			<block type="core/template" name="buckaroo_save_sata_js" template="buckaroo3extended/saveData.phtml"/>
@@ -53,8 +57,12 @@
 			</action>
 			<action method="addItem">
 				<type>skin_js</type>
-				<name>js/TIG/Buckaroo3Extended/paymentGuaranteeTermsAndConditions.js</name>
+				<name>js/TIG/Buckaroo3Extended/paymentGuaranteeObserver.js</name>
 			</action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/TIG/Buckaroo3Extended/afterpayObserver.js</name>
+            </action>
 		</reference>
 		<reference name="before_body_end">
 			<block type="core/template" name="buckaroo_save_sata_js" template="buckaroo3extended/saveData.phtml"/>

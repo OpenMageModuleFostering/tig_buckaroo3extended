@@ -1,4 +1,3 @@
-<?php
 /**
  *                  ___________       __            __
  *                  \__    ___/____ _/  |_ _____   |  |
@@ -33,42 +32,37 @@
  * versions in the future. If you wish to customize this module for your
  * needs please contact servicedesk@totalinternetgroup.nl for more information.
  *
- * @copyright   Copyright (c) 2013 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
+ * @copyright   Copyright (c) 2016 Total Internet Group B.V. (http://www.totalinternetgroup.nl)
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  */
-$installer = $this;
 
-$installer->startSetup();
+var phoneNumber = false;
 
-$statusArray = array(
-    array(
-        'status' => 'buckaroo_pending_payment',
-        'label' => 'Buckaroo (waiting for payment)',
-        'is_new' => 1,
-        'form_key' => '',
-        'store_labels' => array(),
-        'state' => 'new'
-    ),
-    array(
-        'status' => 'buckaroo_incorrect_payment',
-        'label' => 'Buckaroo On Hold (incorrect amount transfered)',
-        'is_new' => 1,
-        'form_key' => '',
-        'store_labels' => array(),
-        'state' => 'holded'
-    )
-);
+document.observe('change', function(e) {
+    if (e.findElement('#p_method_buckaroo3extended_afterpay')) {
+       phoneNumber = jQuery_1123("#billing\\:telephone").val();
 
-foreach ($statusArray as $data) {
-    // Get the entity from the database
-    $statusDb = Mage::getModel('sales/order_status')->load($data['status']);
-
-    // Check if it already has a status - if it doesn't, we're going to add it
-    if (!$statusDb->getStatus()) {
-        $statusDb->setData($data)->setStatus($data['status']);
-        $statusDb->save();
-        $statusDb->assignState($data['state'], false);
+        if (!phoneNumber) {
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').parent().parent().show();
+        } else {
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').parent().parent().hide();
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').val(phoneNumber);
+        }
     }
-}
 
-$installer->endSetup();
+    if (e.findElement("#billing\\:telephone")) {
+        phoneNumber = jQuery_1123("#billing\\:telephone").val();
+        if (!phoneNumber) {
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').parent().parent().show();
+        } else {
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').parent().parent().hide();
+            jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').val(phoneNumber);
+        }
+    }
+
+    jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').change(function(e) {
+        jQuery_1123("#billing\\:telephone").val(jQuery_1123('#buckaroo3extended_afterpay_BPE_Customerphone').val());
+    });
+
+});
+

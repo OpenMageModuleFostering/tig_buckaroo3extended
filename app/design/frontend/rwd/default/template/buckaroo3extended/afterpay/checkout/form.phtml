@@ -16,13 +16,13 @@
     <li>
         <label><?php echo $this->__('Billing name');?>:</label>
         <div class="input-box">
-            <span class="disabled stylefix" id="<?php echo $_code;?>_BPE_Customername" title="<?php echo $this->__('Name');?>"><?php echo $this->getName(); ?></span>
+            <span class="disabled stylefix" id="<?php echo $_code;?>_BPE_Customername" title="<?php echo $this->__('Name');?>"><?php echo $this->escapeHtml($this->getName()); ?></span>
         </div>
     </li>
     <li <?php if ($this->getAddress()->getTelephone() && $this->getAddress()->getTelephone() != '-'): ?>style="display:none;"<?php endif; ?>>
         <label class="required" for="<?php echo $_code;?>_BPE_Customerphone"><?php echo $this->__('Telephone') ?>: <em>*</em></label>
         <div class="input-box">
-            <input class="input-text required-entry" type="text" title="<?php echo $this->__('Telephone') ?>" name="<?php echo $_code;?>_bpe_customer_phone_number" value="<?php echo $this->getPhoneNumber(); ?>"  id="<?php echo $_code;?>_BPE_Customerphone"/>
+            <input class="input-text required-entry" type="text" title="<?php echo $this->__('Telephone') ?>" name="<?php echo $_code;?>_bpe_customer_phone_number" value="<?php echo $this->escapeHtml($this->getPhoneNumber()); ?>"  id="<?php echo $_code;?>_BPE_Customerphone"/>
         </div>
     </li>
     <li>
@@ -41,7 +41,7 @@
         <li>
             <label for="<?php echo $_code;?>_BPE_customer_account_number" class="required"><?php echo $this->__('Bank account number') ?>: <em>*</em></label>
             <div class="input-box">
-                <input class="input-text required-entry" type="text" title="<?php echo $this->__('Bank account number') ?>" name="<?php echo $_code;?>_bpe_customer_account_number" value="<?php echo $this->getBankAccount(); ?>" id="<?php echo $_code;?>_BPE_customer_account_number" />
+                <input class="input-text required-entry" type="text" title="<?php echo $this->__('Bank account number') ?>" name="<?php echo $_code;?>_bpe_customer_account_number" value="<?php echo $this->escapeHtml($this->getBankAccount()); ?>" id="<?php echo $_code;?>_BPE_customer_account_number" />
             </div>
         </li>
     <?php endif;?>
@@ -63,19 +63,19 @@
             <div id="b2b-fields">
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyCOCRegistration"><?php echo $this->__('COC Number');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyCOCRegistration" id="<?php echo $_code;?>_BPE_CompanyCOCRegistration" value="<?php echo $this->getCompanyCOCRegistration();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyCOCRegistration" id="<?php echo $_code;?>_BPE_CompanyCOCRegistration" value="<?php echo $this->escapeHtml($this->getCompanyCOCRegistration());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyName"><?php echo $this->__('Company Name');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->getCompanyName();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->escapeHtml($this->getCompanyName());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_CostCentre"><?php echo $this->__('Cost Center');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->getCostCentre();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->escapeHtml($this->getCostCentre());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_VatNumber"><?php echo $this->__('VAT Number');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->getVatNumber();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->escapeHtml($this->getVatNumber());?>" />
                 </div>
             </div>
         </li>
@@ -99,19 +99,19 @@
             <div id="b2b-fields"<?php echo $style;?>>
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyCOCRegistration"><?php echo $this->__('COC Number');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyCOCRegistration" id="<?php echo $_code;?>_BPE_CompanyCOCRegistration" value="<?php echo $this->getCompanyCoCRegistration();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyCOCRegistration" id="<?php echo $_code;?>_BPE_CompanyCOCRegistration" value="<?php echo $this->escapeHtml($this->getCompanyCoCRegistration());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_CompanyName"><?php echo $this->__('Company Name');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->getCompanyName();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CompanyName" id="<?php echo $_code;?>_BPE_CompanyName" value="<?php echo $this->escapeHtml($this->getCompanyName());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_CostCentre"><?php echo $this->__('Cost Center');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->getCostCentre();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_CostCentre" id="<?php echo $_code;?>_BPE_CostCentre" value="<?php echo $this->escapeHtml($this->getCostCentre());?>" />
                 </div>
                 <label class="required" for="<?php echo $_code;?>_BPE_VatNumber"><?php echo $this->__('VAT Number');?></label>
                 <div class="input-box">
-                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->getVatNumber();?>" />
+                    <input class="input-text required-entry" type="text" name="<?php echo $_code;?>_BPE_VatNumber" id="<?php echo $_code;?>_BPE_VatNumber" value="<?php echo $this->escapeHtml($this->getVatNumber());?>" />
                 </div>
             </div>
         </li>

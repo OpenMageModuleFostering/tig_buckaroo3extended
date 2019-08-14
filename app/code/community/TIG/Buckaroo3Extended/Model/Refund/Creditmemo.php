@@ -276,7 +276,15 @@ class TIG_Buckaroo3Extended_Model_Refund_Creditmemo extends TIG_Buckaroo3Extende
         foreach ($this->_order->getAllItems() as $orderItem)
         {
             if (!in_array($orderItem->getId(), array_flip($items))) {
-                if (($this->_postArray['brq_amount_credit'] + $this->_order->getBaseTotalRefunded()) == $this->_order->getBaseGrandTotal()) {
+
+                $creditAmount = 0;
+                if (isset($this->_postArray['brq_amount_credit'])) {
+                    $creditAmount = $this->_postArray['brq_amount_credit'];
+                }
+
+                $totalAmountInCredit = $creditAmount + $this->_order->getBaseTotalRefunded();
+
+                if ($totalAmountInCredit == $this->_order->getBaseGrandTotal()) {
                     $qty = $orderItem->getQtyInvoiced() - $orderItem->getQtyRefunded();
                 } else {
                     $qty = 0;

@@ -120,7 +120,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_MasterpassLightbox_Observer
             $this->_addAdditionalCreditManagementVariables($vars);
         }
 
-        $shippingCosts = round($this->_order->getBaseShippingInclTax(), 2);
+        $shippingCosts = round($this->_order->getShippingAmount(), 2);
 
         $discount = null;
 
@@ -174,6 +174,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_MasterpassLightbox_Observer
         if ($this->_order instanceof Mage_Sales_Model_Quote) {
             $quote = $this->_order;
 
+            $shippingCosts = $vars['amountDebit'];
+
             // repair empty order ID
             $vars['orderId'] = 'quote_' . $quote->getId();
 
@@ -192,6 +194,8 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_MasterpassLightbox_Observer
 
                 $productPrice = ($item->getBasePrice() * $item->getQty()) + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount();
 
+                $shippingCosts -= $productPrice;
+
                 if($item->getProductType() == 'bundle') {
                     $productPrice = $quote->getSubtotal() + $item->getBaseTaxAmount() + $item->getBaseHiddenTaxAmount();
                 }
@@ -201,6 +205,9 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_MasterpassLightbox_Observer
 
                 $groupId++;
             }
+
+            // repair empty shipping costs
+            $array['ShippingCosts'] = (string) round($shippingCosts,2);
         }
 
         if (array_key_exists('customVars', $vars) && array_key_exists($this->_method, $vars['customVars']) && is_array($vars['customVars'][$this->_method])) {

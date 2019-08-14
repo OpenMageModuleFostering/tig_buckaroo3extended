@@ -368,7 +368,7 @@ class TIG_Buckaroo3Extended_Model_Observer_Abstract extends TIG_Buckaroo3Extende
                 if ($valid == '3'){
                     $valid = "0" . $valid . "1";
                 }
-                $number = str_replace($invalid, $valid, $number);
+                $number = substr_replace($number, $valid, 0, strlen($invalid));
             }
         }
         return $number;

@@ -25,7 +25,7 @@
             <li>
                 <label for="<?php echo $_code;?>_BPE_Customername" class="required"><?php echo $this->__('Name');?>:</label>
                 <div class="input-box">
-                    <span class="disabled" id="<?php echo $_code;?>_BPE_Customername"><?php echo $name; ?></span>
+                    <span class="disabled" id="<?php echo $_code;?>_BPE_Customername"><?php $this->escapeHtml($name); ?></span>
                 </div>
             </li>
             <li>

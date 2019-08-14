@@ -7,6 +7,15 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
     protected $_customResponseProcessing = false;
 
+    const BUCK_RESPONSE_PAYMENT_FAILURE      = 'buckaroo/buckaroo3extended_response/response_payment_failure';
+    const BUCK_RESPONSE_VALIDATION_ERROR     = 'buckaroo/buckaroo3extended_response/response_validation_error';
+    const BUCK_RESPONSE_TECHNICAL_ERROR      = 'buckaroo/buckaroo3extended_response/response_technical_error';
+    const BUCK_RESPONSE_PAYMENT_REJECTED     = 'buckaroo/buckaroo3extended_response/response_payment_rejected';
+    const BUCK_RESPONSE_CANCELED_BY_USER     = 'buckaroo/buckaroo3extended_response/response_canceled_by_user';
+    const BUCK_RESPONSE_CANCELED_BY_MERCHANT = 'buckaroo/buckaroo3extended_response/response_canceled_by_merchant';
+    const BUCK_RESPONSE_DEFAUL_MESSAGE       = 'buckaroo/buckaroo3extended_response/response_default';
+
+
     public function setCurrentOrder($order)
     {
         $this->_order = $order;
@@ -131,16 +140,20 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         return $this->_requiredAction($parsedResponse);
     }
 
+    /**
+     * Get required action by response status.
+     * @param $response
+     */
     protected function _requiredAction($response)
     {
         switch ($response['status']) {
             case self::BUCKAROO_SUCCESS:           return $this->_success();
-            case self::BUCKAROO_FAILED:            return $this->_failed();
-            case self::BUCKAROO_ERROR:             return $this->_error();
+            case self::BUCKAROO_FAILED:            return $this->_failed($response['message']);
+            case self::BUCKAROO_ERROR:             return $this->_error($response['message']);
             case self::BUCKAROO_NEUTRAL:           return $this->_neutral();
             case self::BUCKAROO_PENDING_PAYMENT:   return $this->_pendingPayment();
-            case self::BUCKAROO_INCORRECT_PAYMENT: return $this->_incorrectPayment();
-            case self::BUCKAROO_REJECTED:          return $this->_rejected();
+            case self::BUCKAROO_INCORRECT_PAYMENT: return $this->_incorrectPayment($response['message']);
+            case self::BUCKAROO_REJECTED:          return $this->_rejected($response['message']);
             default:                               return $this->_neutral();
         }
     }
@@ -184,7 +197,10 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         exit;
     }
 
-    protected function _success()
+    /**
+     * @param string $status
+     */
+    protected function _success($status = self::BUCKAROO_SUCCESS)
     {
         $this->_debugEmail .= "The response indicates a successful request. \n";
 
@@ -203,8 +219,17 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $payment->getMethodInstance()->saveAdditionalData($this->_response);
 
         $shouldSend = Mage::getStoreConfig('buckaroo/' . $payment->getMethod() . '/order_email', $this->_order->getStoreId());
-        if(!$this->_order->getEmailSent() && $shouldSend)
+
+        /**
+         * Do not send order confirmation email when the payment is still pending.
+         */
+        if ($status == self::BUCKAROO_PENDING_PAYMENT) {
+            $shouldSend = false;
+        }
+
+        if(!$this->_order->getEmailSent() && false !== $shouldSend)
         {
+            $this->_debugEmail .= "New Order email has been send \n";
             $this->sendNewOrderEmail();
         }
 
@@ -225,7 +250,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         exit;
     }
 
-    protected function _failed()
+    protected function _failed($message = '')
     {
         $this->_debugEmail .= 'The transaction was unsuccessful. \n';
 
@@ -238,8 +263,10 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
         $this->restoreQuote();
 
+
+
         Mage::getSingleton('core/session')->addError(
-            Mage::helper('buckaroo3extended')->__('Your payment was unsuccesful. Please try again or choose another payment method.')
+            $this->_getCorrectFailureMessage($message)
         );
 
         if (Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/cancel_on_failed', $this->_order->getStoreId())) {
@@ -257,12 +284,12 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         exit;
     }
 
-    protected function _error()
+    protected function _error($message = '')
     {
         $this->_debugEmail .= "The transaction generated an error. \n";
 
         Mage::getSingleton('core/session')->addError(
-                Mage::helper('buckaroo3extended')->__('A technical error has occurred. Please try again. If this problem persists, please contact the shop owner.')
+                $this->_getCorrectFailureMessage($message)
         );
 
         $this->_order->addStatusHistoryComment(
@@ -289,7 +316,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         header('Location:' . $returnUrl);
     }
 
-    protected function _rejected()
+    protected function _rejected($message = '')
     {
 
         $this->_debugEmail .= "The transaction generated an error. \n";
@@ -310,7 +337,7 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
             break;
             default:
                 $message = Mage::helper('buckaroo3extended')->__(
-                    'The payment has been rejected, please try again or select a different paymentmethod.'
+                    $this->_getCorrectFailureMessage($message)
                 );
         }
 
@@ -356,6 +383,58 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
         $this->sendDebugEmail();
         header('Location:' . $returnUrl);
         exit;
+    }
+
+    /**
+     * @param $message
+     *
+     * @return string
+     */
+    protected function _getCorrectFailureMessage($message)
+    {
+        switch ($message) {
+            case 'Payment failure' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_PAYMENT_FAILURE,
+                    $this->_order->getStoreId())
+                );
+                break;
+            case 'Validation error' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_VALIDATION_ERROR,
+                    $this->_order->getStoreId())
+                );
+                break;
+            case 'Technical error' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_TECHNICAL_ERROR,
+                    $this->_order->getStoreId())
+                );
+                break;
+            case 'Payment rejected' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_PAYMENT_REJECTED,
+                    $this->_order->getStoreId())
+                );
+                break;
+            case 'Cancelled by consumer' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_CANCELED_BY_USER,
+                    $this->_order->getStoreId())
+                );
+                break;
+            case 'Cancelled by merchant' :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_CANCELED_BY_MERCHANT,
+                    $this->_order->getStoreId())
+                );
+                break;
+            default :
+                return Mage::helper('buckaroo3extended')->__(Mage::getStoreConfig(
+                    self::BUCK_RESPONSE_DEFAUL_MESSAGE,
+                    $this->_order->getStoreId())
+                );
+        }
     }
 
     /**
@@ -411,12 +490,12 @@ class TIG_Buckaroo3Extended_Model_Response_Abstract extends TIG_Buckaroo3Extende
 
     protected function _pendingPayment()
     {
-        $this->_success();
+        $this->_success(self::BUCKAROO_PENDING_PAYMENT);
     }
 
-    protected function _incorrectPayment()
+    protected function _incorrectPayment($message = '')
     {
-        $this->_error();
+        $this->_error($message);
     }
 
     protected function _verifyError()

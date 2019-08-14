@@ -826,18 +826,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </no>
-                        <sendmail translate="label comment tooltip">
-                            <label>Send payment email</label>
-                            <comment>Buckaroo sends an email to the customer with the payment procedures.</comment>
-                            <tooltip>Set to 'No' leaves the customer uninformed on the payment obligations.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_paymentguarantee_advanced</validate>
-                        </sendmail>
                         <order_email translate="label comment">
                             <label>Send order confirmation email</label>
                             <comment>Enable to send an order confirmation email to the customer when the payment is succesfull. Specific for this payment method.</comment>
@@ -1129,18 +1117,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </no>
-                        <sendmail translate="label comment tooltip">
-                            <label>Send payment email</label>
-                            <comment>Buckaroo sends an email to the customer with the payment procedures.</comment>
-                            <tooltip>Set to 'No' leaves the customer uninformed on the payment obligations.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>80</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_paymentguarantee_advanced</validate>
-                        </sendmail>
                         <order_email translate="label comment">
                             <label>Send order confirmation email</label>
                             <comment>Enable to send an order confirmation email to the customer when the payment is succesfull. Specific for this payment method.</comment>
@@ -5218,18 +5194,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </cards_allowed>
-                        <send_mail translate="label comment tooltip">
-                            <label>Send payment email</label>
-                            <comment>Buckaroo sends an email to the customer with the payment procedures.</comment>
-                            <tooltip>Set to 'No' leaves the customer uninformed on the payment obligations.</tooltip>
-                            <frontend_type>select</frontend_type>
-                            <source_model>buckaroo3extended/sources_yesno</source_model>
-                            <sort_order>60</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <validate>buckaroo3extended_giftcards_advanced</validate>
-                        </send_mail>
                         <order_email translate="label comment">
                             <label>Send order confirmation email</label>
                             <comment>Enable to send an order confirmation email to the customer when the payment is succesfull. Specific for this payment method.</comment>
@@ -6525,6 +6489,85 @@
                         </certificate_upload>
                     </fields>
                 </buckaroo3extended_certificate>
+                <buckaroo3extended_response translate="label">
+                    <label>Custom default error messages</label>
+                    <sort_order>21500</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <hint>
+                            <frontend_model>buckaroo3extended/adminhtml_system_config_responsehint</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </hint>
+                        <response_payment_failure translate="label comment">
+                            <label>Payment failure</label>
+                            <comment>Set response message for an payment failure.</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_payment_failure>
+                        <response_validation_error translate="label comment">
+                            <label>Validation error</label>
+                            <comment>Set response message for an validation error.</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_validation_error>
+                        <response_technical_error translate="label comment">
+                            <label>Technical error</label>
+                            <comment>Set response message for an technical error.</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_technical_error>
+                        <response_payment_rejected translate="label comment">
+                            <label>Payment rejected</label>
+                            <comment>Set response message for an rejected payment</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_payment_rejected>
+                        <response_canceled_by_user translate="label comment">
+                            <label>Canceled by user</label>
+                            <comment>Set response message for an payment canceled by the consumer</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_canceled_by_user>
+                        <response_canceled_by_merchant translate="label comment">
+                            <label>Canceled by merchant</label>
+                            <comment>Set response message for an payment canceled by the merchant</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_canceled_by_merchant>
+                        <response_default translate="label comment">
+                            <label>Default message</label>
+                            <comment>Set response message for the default message when a payment fails but there is no response code.</comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </response_default>
+                    </fields>
+                </buckaroo3extended_response>
                 <buckaroo3extended_advanced translate="label">
                     <label>Advanced Configuration</label>
                     <sort_order>22000</sort_order>

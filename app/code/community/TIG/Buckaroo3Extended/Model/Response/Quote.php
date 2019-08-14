@@ -93,7 +93,7 @@ class TIG_Buckaroo3Extended_Model_Response_Quote extends TIG_Buckaroo3Extended_M
         $this->sendDebugEmail();
 
         return array(
-            'error' => Mage::helper('buckaroo3extended')->__('Your payment was unsuccesful. Please try again or choose another payment method.'),
+            'error' => Mage::helper('buckaroo3extended')->__('Your payment was unsuccessful. Please try again or choose another payment method.'),
         );
     }
 

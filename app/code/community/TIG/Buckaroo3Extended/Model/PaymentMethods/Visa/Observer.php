@@ -141,8 +141,13 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Visa_Observer extends TIG_Bucka
             $enrolled = $response['brq_SERVICE_visa_Enrolled'];
             $enrolled = ($enrolled == 'Y') ? true : false;
 
+            /**
+             * The status selected below determines how the payment or authorize is processed.
+             * A,Y,N,U :
+             * Attempt/ Yes will lead to a successfull transaction/payment while No/ Unknown will leade to a failure.
+             */
             $authenticated = $response['brq_SERVICE_visa_Authentication'];
-            $authenticated = ($authenticated == 'Y') ? true : false;
+            $authenticated = ($authenticated == 'Y' || $authenticated == 'A') ? true : false;
         }
 
         $order->setBuckarooSecureEnrolled($enrolled)

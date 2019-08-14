@@ -168,30 +168,12 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Bancontactmrcash_Observer
         }
 
         /**
-         * Get the buckaroo-specific parameters.
-         */
-        $buckarooParams = $params['buckaroo3extended_refund_fields'];
-
-        /**
          * Get the variables array from the refund request.
          *
          * @var TIG_Buckaroo3Extended_Model_Refund_Request_Abstract $refundRequest
          */
         $refundRequest = $observer->getRequest();
         $vars = $refundRequest->getVars();
-
-        /**
-         * Add 3 Mr. Cash specific fields to the variables array if the fields are available.
-         */
-        if (isset($buckarooParams['customer_iban'])) {
-            $vars['customVars'][$this->_method]['customeriban'] = $buckarooParams['customer_iban'];
-        }
-        if (isset($buckarooParams['customer_account_name'])) {
-            $vars['customVars'][$this->_method]['customeraccountname'] = $buckarooParams['customer_account_name'];
-        }
-        if (isset($buckarooParams['customer_bic'])) {
-            $vars['customVars'][$this->_method]['customerbic'] = $buckarooParams['customer_bic'];
-        }
 
         /**
          * Update the refund request with the new variables.

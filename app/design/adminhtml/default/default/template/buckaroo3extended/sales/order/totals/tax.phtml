@@ -102,7 +102,7 @@ $taxIter++;
         <?php endforeach; ?>
     <?php endif; ?>
     <?php foreach ($_weees as $weeeTitle => $weeeAmount): ?>
-        <tr class="summary-details-<?php echo $taxIter; ?> summary-details<?php if ($isTop): echo ' summary-details-first'; endif; ?>"
+        <tr class="summary-details-<?php $this->escapeHtml($taxIter); ?> summary-details<?php if ($isTop): echo ' summary-details-first'; endif; ?>"
             style="display:none;">
             <td class="a-right" colspan="1">
                 <?php echo $this->escapeHtml($weeeTitle); ?>

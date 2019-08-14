@@ -12,6 +12,11 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
     protected $_debugEmail = '';
     protected $_method = '';
 
+    protected $creditCardMethods = array(
+        'mastercard',
+        'visa'
+    );
+
     public function setCurrentOrder($order)
     {
         $this->_order = $order;
@@ -359,21 +364,20 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         }
 
         if (
-          Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/cancel_on_failed', $this->_order->getStoreId())
-          && $this->_order->canCancel()
+            Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/cancel_on_failed', $this->_order->getStoreId())
+            && $this->_order->canCancel()
         ) {
-            $this->_order->cancel()
-                         ->save();
+            $this->_order->cancel();
         }
 
         if ($this->_order->getState() == Mage_Sales_Model_Order::STATE_CANCELED) {
             $this->_order->addStatusHistoryComment($description, $newStates[1])
-                         ->save();
+                ->save();
 
             $this->_order->setStatus($newStates[1])->save();
         } else {
             $this->_order->addStatusHistoryComment($description)
-                         ->save();
+                ->save();
         }
 
         return true;
@@ -582,6 +586,10 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
 
         //sort the array
         $sortableArray = $this->buckarooSort($origArray);
+        
+        //check if encoding is used for the received postData
+        $doUrlDecode = $this->_checkDoubleEncoding($sortableArray['brq_timestamp']);
+        $this->_debugEmail .= "URL Encoding = " . var_export($doUrlDecode, true) . "\n";
 
         //turn into string and add the secret key to the end
         $signatureString = '';
@@ -589,7 +597,9 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
             if ('brq_SERVICE_masterpass_CustomerPhoneNumber' !== $key
                 && 'brq_SERVICE_masterpass_ShippingRecipientPhoneNumber' !== $key
             ) {
-                $value = urldecode($value);
+                if ($doUrlDecode) {
+                    $value = urldecode($value);    
+                }
             }
             $signatureString .= $key . '=' . $value;
         }
@@ -603,6 +613,39 @@ class TIG_Buckaroo3Extended_Model_Response_Push extends TIG_Buckaroo3Extended_Mo
         $this->_debugEmail .= "\nSignature: {$signature}\n";
 
         return $signature;
+    }
+
+    /**
+     * Check if the BPE 3.0 Plaza setting "Enable double encoding of redirect data" is checked
+     * Timestamp will contain an "+"
+     *
+     * @param $postFieldTimestamp
+     *
+     * @return bool
+     */
+    protected function _checkDoubleEncoding($postFieldTimestamp)
+    {
+        $hasDoubleEncoding = false;
+        if (strpos($postFieldTimestamp, '+') !== false) {
+            $hasDoubleEncoding = true;
+        } 
+
+        return $hasDoubleEncoding;
+    }
+
+    /**
+     * @param $method
+     *
+     * @return bool
+     */
+    protected function _checkPaymentMethodIsCreditCard($method)
+    {
+        $isCreditCard = false;
+        if (in_array($method, $this->creditCardMethods)) {
+            $isCreditCard = true;
+        }
+
+        return $isCreditCard;
     }
 
     /**

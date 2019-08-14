@@ -64,9 +64,6 @@
        			<template>buckaroo3extended/sales/order/totals/tax.phtml</template>
        		</action>
         </reference>
-        <reference name="content">
-            <block type="buckaroo3extended/adminhtml_sales_order_creditmemo_create_refundFields" name="buckaroo_refund_fields" template="buckaroo3extended/sales/order/creditmemo/create/refund_fields.phtml"/>
-        </reference>
     </adminhtml_sales_order_creditmemo_new>
 
     <adminhtml_sales_order_creditmemo_updateqty>

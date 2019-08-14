@@ -171,9 +171,12 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer extends TIG_B
         $billingAddress     = $this->_order->getBillingAddress();
         $streetFull         = $this->_processAddress($billingAddress->getStreetFull());
         $rawPhoneNumber     = $billingAddress->getTelephone();
-        $rawPhoneNumber     = (!empty($rawPhoneNumber))? $rawPhoneNumber : $additionalFields['BPE_PhoneNumber'];
-        $billingPhonenumber = $this->_processPhoneNumber($rawPhoneNumber);
 
+        if (!is_numeric($rawPhoneNumber) || $rawPhoneNumber == '-') {
+            $rawPhoneNumber = $additionalFields['BPE_PhoneNumber'];
+        }
+
+        $billingPhonenumber = $this->_processPhoneNumber($rawPhoneNumber);
         $billingInfo = array(
             'BillingTitle'             => $billingAddress->getFirstname(),
             'BillingGender'            => $additionalFields['BPE_Customergender'],
@@ -405,6 +408,7 @@ class TIG_Buckaroo3Extended_Model_PaymentMethods_Afterpay_Observer extends TIG_B
         //but for some error correction we try to find if there is some faulty notation
 
         $return = array("orginal" => $number, "clean" => false, "mobile" => false, "valid" => false);
+
         //first strip out the non-numeric characters:
         $match = preg_replace('/[^0-9]/Uis', '', $number);
         if ($match) {

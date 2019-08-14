@@ -36,7 +36,7 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
     {
         $return = false;
 
-        $configValues    = self::_checkConfigValues();
+        $configValues    = self::_checkConfigValues($quote);
 
         $currencyAllowed = self::_checkCurrencyAllowed();
 
@@ -66,21 +66,27 @@ class TIG_Buckaroo3Extended_Model_Request_Availability extends TIG_Buckaroo3Exte
      *
      * @return bool
      */
-    private static function _checkConfigValues()
+    private static function _checkConfigValues($quote = null)
     {
         $configValues = false;
 
+        $storeId = Mage::app()->getStore()->getStoreId();
+        // get via quote the store id for admin
+        if ('Admin' == Mage::app()->getStore()->getName() && $quote) {
+            $storeId = $quote->getStoreId();
+        }
+
         //config values that need to be entered
-        $configEnabled             = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/active', Mage::app()->getStore()->getStoreId());
-        $merchantKeyEntered        = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/key', Mage::app()->getStore()->getStoreId());
-        $thumbprintEntered         = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/thumbprint', Mage::app()->getStore()->getStoreId());
-        $orderStatusSuccessEntered = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_success', Mage::app()->getStore()->getStoreId());
-        $orderStatusFailedEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_failed', Mage::app()->getStore()->getStoreId());
+        $configEnabled             = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/active', $storeId);
+        $merchantKeyEntered        = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/key', $storeId);
+        $thumbprintEntered         = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended/thumbprint', $storeId);
+        $orderStatusSuccessEntered = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_success',$storeId);
+        $orderStatusFailedEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status_failed',$storeId);
 
         //advanced config values that need to be entered
-        $newOrderStatusEntered     = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status', Mage::app()->getStore()->getStoreId());
-        $orderStateSuccessEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_success', Mage::app()->getStore()->getStoreId());
-        $orderStateFailedEntered   = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_failed', Mage::app()->getStore()->getStoreId());
+        $newOrderStatusEntered     = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_status', $storeId);
+        $orderStateSuccessEntered  = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_success', $storeId);
+        $orderStateFailedEntered   = (bool) Mage::getStoreConfig('buckaroo/buckaroo3extended_advanced/order_state_failed', $storeId);
 
         if ($configEnabled
             && $merchantKeyEntered

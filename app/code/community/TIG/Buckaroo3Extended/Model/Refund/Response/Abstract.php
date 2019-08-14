@@ -66,6 +66,19 @@ class TIG_Buckaroo3Extended_Model_Refund_Response_Abstract extends TIG_Buckaroo3
         return $this;
     }
 
+    protected function _rejected()
+    {
+        $this->_debugEmail .= 'The refund request has been rejected \n';
+
+        $this->_updateRefundedOrderStatus(false);
+
+        $this->sendDebugEmail();
+
+        Mage::throwException(Mage::helper('buckaroo3extended')->__($this->_response->Status->Code->_));
+
+        return $this;
+    }
+
     protected function _failed()
     {
         $this->_debugEmail .= 'The transaction request has failed. \n';
